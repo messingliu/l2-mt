@@ -17,4 +17,7 @@ dependency-reduced-pom.xml
 .mvn
 *.ipr
 *.iws
+*.log
+*.gz
+*.tmp
 README.html
