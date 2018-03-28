@@ -1,5 +1,6 @@
 package com.tantan.l2.clients;
 
+import com.tantan.l2.models.Data;
 import com.tantan.l2.models.User;
 import com.tantan.l2.models.Users;
 import org.slf4j.Logger;
@@ -20,12 +21,12 @@ public class MergerClient {
     public Users getUsers(Long id, String limit, String search, String filter, String with) {
         RestTemplate restTemplate = new RestTemplate();
         //TODO: change the url to merger url and replace the value to return
-        String usersFromMerger = restTemplate.getForObject("http://gturnquist-quoters.cfapps.io/api/random", String.class);
-        LOGGER.info("usersFromMerger data is :  " + usersFromMerger.toString());
+        Data dataFromMerger = restTemplate.getForObject("http://localhost:8090/users?search=suggested,scenario-suggested&filter=&with=contacts,questions,scenarios,user.publicMoments,relationships&id=1&limit=10", Data.class);
+        LOGGER.info("The usersFromMerger data is :  " + dataFromMerger.toString());
 
         User user = new User().setId(1L).setDistance(1).setLastactivity("none").setPopularity(22).setScore(3).setType("type");
         List<User> userList = new ArrayList<User>();
         userList.add(user);
-        return new Users(userList);
+        return dataFromMerger.getUsers();//new Users(userList);
     }
 }
