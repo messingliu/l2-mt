@@ -1,0 +1,10 @@
+{
+  "namespace": "com.tantan.avro",
+  "type": "record",
+  "name": "Test",
+  "fields": [
+    {"name": "name", "type": "string"},
+    {"name": "age",  "type": ["int", "null"]},
+    {"name": "gender", "type": ["string", "null"]}
+  ]
+}

@@ -15,4 +15,17 @@ Log data in ./l2-mt.log
 
 run ./gradlew bootRun --debug to show print out log
 
+
+
+Steps for kafka develop and test:
+1. Follow https://kafka.apache.org/quickstart to setup kafka in local machine
+2. Add or update avro schema files in src/main/resources/avro
+3. Build and generate java file in build/generated/avro
+4. Import the java file and develop
+5. Follow the example of topic test/test.avsc/Test.java to develop the producer and consumer
+6. Produce the kafka event by run the app
+7. Use the kafka consumer script to verify the producer
+8. Use the kafka consumer in L2 to consume the event to test the consumer
+9. To test the kafka producer with Kafka cluster, change kafka.producer.bootstrap in application.properties
+
 # l2-mt
