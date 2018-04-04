@@ -1,5 +1,6 @@
 package com.tantan.l2.services;
 import com.tantan.l2.models.Users;
+import com.tantan.l2.models.Resp;
 
 
 public interface L2Service {
@@ -8,5 +9,5 @@ public interface L2Service {
    * @param id - user id
    * @return
    */
-  public Users getUsers(Long id, String limit, String search, String filter, String with);
+  public Resp getUsers(Long id, String limit, String search, String filter, String with);
 }

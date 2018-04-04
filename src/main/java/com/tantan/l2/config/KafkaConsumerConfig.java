@@ -16,7 +16,7 @@ import org.springframework.kafka.core.DefaultKafkaConsumerFactory;
 
 import com.tantan.l2.helpers.AvroDeserializer;
 
-import com.tantan.avro.Test;
+import com.tantan.avro.KafkaTest;
 
 @Configuration
 @EnableKafka
@@ -37,14 +37,14 @@ public class KafkaConsumerConfig {
     }
 
     @Bean
-    public ConsumerFactory<String, Test> consumerFactory() {
+    public ConsumerFactory<String, KafkaTest> consumerFactory() {
         return new DefaultKafkaConsumerFactory<>(consumerConfigs(), new StringDeserializer(),
-                new AvroDeserializer<>(Test.class));
+                new AvroDeserializer<>(KafkaTest.class));
     }
 
     @Bean
-    public ConcurrentKafkaListenerContainerFactory<String, Test> kafkaListenerContainerFactory() {
-        ConcurrentKafkaListenerContainerFactory<String, Test> factory =
+    public ConcurrentKafkaListenerContainerFactory<String, KafkaTest> kafkaListenerContainerFactory() {
+        ConcurrentKafkaListenerContainerFactory<String, KafkaTest> factory =
                 new ConcurrentKafkaListenerContainerFactory<>();
         factory.setConsumerFactory(consumerFactory());
         return factory;

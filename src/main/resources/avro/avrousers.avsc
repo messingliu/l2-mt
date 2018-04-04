@@ -1,0 +1,25 @@
+{
+    "namespace": "com.tantan.avro",
+    "type":"record",
+    "name": "AvroUsersTest",
+    "fields":[
+        {
+            "name":"users",
+            "type":{
+                "type": "array",  
+                "items":{
+                    "name":"AvroUserTest",
+                    "type":"record",
+                    "fields":[
+                        {"name": "id", "type": "long"},
+                        {"name": "score",  "type": "float"},
+                        {"name": "popularity", "type": "float"},
+                        {"name": "distance", "type": "float"},
+                        {"name": "lastactivity", "type": "string"},
+                        {"name": "type", "type": ["string", "null"]}
+                        ]
+                }
+            }
+        }
+    ] 
+}
