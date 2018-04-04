@@ -1,0 +1,9 @@
+{
+  "namespace": "com.tantan.avro",
+  "type": "record",
+  "name": "AvroExtraTest",
+  "fields": [
+    {"name": "isInsufficient", "type": "boolean"},
+    {"name": "SelectedCount",  "type": "long"}
+  ]
+}

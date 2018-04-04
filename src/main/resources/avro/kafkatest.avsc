@@ -1,0 +1,10 @@
+{
+  "namespace": "com.tantan.avro",
+  "type": "record",
+  "name": "KafkaTest",
+  "fields": [
+    {"name": "meta", "type": "com.tantan.avro.AvroMetaTest"},
+    {"name": "data",  "type": "com.tantan.avro.AvroUsersTest"},
+    {"name": "extra", "type": "com.tantan.avro.AvroExtraTest"}
+  ]
+}
