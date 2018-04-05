@@ -6,15 +6,13 @@ import org.springframework.stereotype.Component;
 @Component
 @ConfigurationProperties(prefix = "kafka.producer")
 public class KafkaProperties {
+  private String bootstrap;
 
-    private String bootstrap;
+  public String getBootstrap() {
+    return bootstrap;
+  }
 
-    public String getBootstrap() {
-        return bootstrap;
-    }
-
-    public void setBootstrap(String bootstrap) {
-        this.bootstrap = bootstrap;
-    }
-
+  public void setBootstrap(String bootstrap) {
+    this.bootstrap = bootstrap;
+  }
 }

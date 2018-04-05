@@ -8,10 +8,10 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class KafkaConsumer {
-    public static Logger logger = LoggerFactory.getLogger(KafkaConsumer.class);
+  public static Logger logger = LoggerFactory.getLogger(KafkaConsumer.class);
 
-    @org.springframework.kafka.annotation.KafkaListener(topics = "test")
-    public void listen(KafkaTest kafkatest) throws Exception {
-        logger.info("Kafka consume: " + kafkatest.toString());
-    }
+  @org.springframework.kafka.annotation.KafkaListener(topics = "test")
+  public void listen(KafkaTest kafkatest) throws Exception {
+    logger.info("Kafka consume: " + kafkatest.toString());
+  }
 }

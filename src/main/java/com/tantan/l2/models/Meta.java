@@ -2,31 +2,34 @@ package com.tantan.l2.models;
 
 public class Meta {
 
-    private long code;
-    private String message;
-    public Meta(){}
+  private long code;
+  private String message;
 
-    public Meta(long code, String message) {
-        this.code = code;
-        this.message = message;
-    }
+  public Meta() {
+  }
 
-    public long getCode() {
-        return code;
-    }
-    public String getMessage() {
-        return message;
-    }
+  public Meta(long code, String message) {
+    this.code = code;
+    this.message = message;
+  }
 
-    public Meta setCode(long code) {
-        this.code = code;
-        return this;
-    }
+  public long getCode() {
+    return code;
+  }
 
-    public Meta setMessage(String message) {
-        this.message = message;
-        return this;
-    }
+  public String getMessage() {
+    return message;
+  }
+
+  public Meta setCode(long code) {
+    this.code = code;
+    return this;
+  }
+
+  public Meta setMessage(String message) {
+    this.message = message;
+    return this;
+  }
 
 }
 
