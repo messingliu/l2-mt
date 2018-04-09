@@ -16,7 +16,7 @@ public class AbTestClient {
    * @param testKeys test key set
    * @return return the treatment map
    */
-  public Map<String, String> getTreatments(final int id, final Set<String> testKeys) {
+  public Map<String, String> getTreatments(final long id, final Set<String> testKeys) {
     //TODO: add treatments
     String treatment = Feature.POPULARITY.name().toLowerCase() + ":0.5#" +
         Feature.TYPE.name().toLowerCase() + ":0.5#" +
@@ -35,7 +35,7 @@ public class AbTestClient {
    * @param testKey test key
    * @return return the treatment
    */
-  public String getTreatment(final int id, final String testKey) {
+  public String getTreatment(final long id, final String testKey) {
     //TODO: mock data, update the treatment
     String treatment = Feature.POPULARITY.name().toLowerCase() + ":0.5#" +
         Feature.TYPE.name().toLowerCase() + ":0.5#" +

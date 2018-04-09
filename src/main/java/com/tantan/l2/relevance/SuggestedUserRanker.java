@@ -3,6 +3,7 @@ package com.tantan.l2.relevance;
 import com.tantan.l2.clients.AbTestClient;
 import com.tantan.l2.constants.AbTestKeys;
 import com.tantan.l2.models.User;
+import com.tantan.l2.models.UserInfoResponse;
 import com.tantan.l2.relevance.feature.Feature;
 import com.tantan.l2.relevance.feature.FeatureVector;
 import org.slf4j.Logger;
@@ -24,7 +25,7 @@ public class SuggestedUserRanker {
   static {
     AB_TEST_KEYS.add(AbTestKeys.SUGGESTED_USER_MODEL.name());
   }
-  public List<User> getSuggestedUsers(int userId, List<User> userList, int topK) {
+  public List<User> getSuggestedUsers(long userId, UserInfoResponse userInfoResponse, List<User> userList, int topK) {
     Map<String, String> abTestMap = _abTestClient.getTreatments(userId, AB_TEST_KEYS);
     SuggestedUserScorer suggestedUserScorer = new SuggestedUserScorer(abTestMap);
     for (User user : userList) {

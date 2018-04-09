@@ -1,6 +1,7 @@
 package com.tantan.l2.controllers;
 
 import com.tantan.l2.models.Resp;
+import com.tantan.l2.models.UserInfoResponse;
 import com.tantan.l2.services.SuggestedUsers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -13,7 +14,7 @@ public class UsersController {
   private SuggestedUsers suggestedUsers;
 
   @RequestMapping("/users")
-  public Resp greeting(@RequestParam(value="id") Long id,
+  public Resp suggestedUsers(@RequestParam(value="id") Long id,
                        @RequestParam(value="limit") String limit,
                        @RequestParam(value="search") String search,
                        @RequestParam(value="filter", defaultValue = "") String filter,

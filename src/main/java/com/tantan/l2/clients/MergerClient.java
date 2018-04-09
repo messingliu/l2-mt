@@ -7,13 +7,11 @@ import com.tantan.l2.models.Meta;
 import com.tantan.l2.models.Extra;
 
 
-import com.tantan.l2.relevance.SuggestedUserRanker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
-import com.tantan.l2.utils.WxMappingJackson2HttpMessageConverter;
+import com.tantan.l2.utils.JacksonConverter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,8 +20,6 @@ import java.util.List;
 public class MergerClient {
   private final Logger LOGGER = LoggerFactory.getLogger(this.getClass());
 
-  @Autowired
-  private SuggestedUserRanker _suggestedUserRanker;
   /**
    * This method will get a user from id
    *
@@ -34,7 +30,7 @@ public class MergerClient {
 //            "&filter=&with=contacts,questions,scenarios,user.publicMoments,relationships&user_id=";
   public Resp getUsers(Long id, String limit, String search, String filter, String with) {
     RestTemplate restTemplate = new RestTemplate();
-    restTemplate.getMessageConverters().add(new WxMappingJackson2HttpMessageConverter());
+    restTemplate.getMessageConverters().add(new JacksonConverter());
 
     //Get from merger
     //String url = url_link + id + "&limit=" + limit;
@@ -60,8 +56,6 @@ public class MergerClient {
     userList.add(user1);
     userList.add(user2);
     userList.add(user3);
-    return new Resp().setMeta(new Meta(1L, "test")).setData(new UserList(_suggestedUserRanker.getSuggestedUsers(1, userList, 1))).setExtra(new Extra(false, 2));
-
-
+    return new Resp().setMeta(new Meta(1L, "test")).setData(new UserList(userList)).setExtra(new Extra(false, 2));
   }
 }

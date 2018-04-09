@@ -15,17 +15,21 @@
  */
 package com.tantan.l2.controllers;
 
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.tantan.l2.models.User;
+import com.tantan.l2.services.SuggestedUsers;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.util.LinkedMultiValueMap;
@@ -43,7 +47,7 @@ public class UserControllerTests {
     private MockMvc mockMvc;
 
     @Test
-    public void paramGreetingShouldReturnTailoredMessage() throws Exception {
+    public void testReturnSuggestedUser() throws Exception {
         User user = new User().setId(1L).setDistance(1).setLastactivity("none").setPopularity(22).setScore(3).setType("type");
         List<User> userList = new ArrayList<User>();
         userList.add(user);
@@ -56,7 +60,7 @@ public class UserControllerTests {
 
         this.mockMvc.perform(get("/users").params(paramMap))
                 .andDo(print()).andExpect(status().isOk())
-                .andExpect(jsonPath("$.users[0].popularity").value(22.0));
+                .andExpect(jsonPath("$.data.users[0].popularity").value(44.0));
     }
 
 }
