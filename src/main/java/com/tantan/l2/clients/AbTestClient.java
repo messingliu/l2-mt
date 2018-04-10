@@ -1,6 +1,8 @@
 package com.tantan.l2.clients;
 
 import com.tantan.l2.relevance.feature.Feature;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
@@ -9,6 +11,8 @@ import java.util.Set;
 
 @Component
 public class AbTestClient {
+  private final Logger LOGGER = LoggerFactory.getLogger(this.getClass());
+
   /**
    * Get the treatment for a particular user ID with different test keys
    *
@@ -25,6 +29,7 @@ public class AbTestClient {
     for(String key: testKeys) {
       map.put(key,treatment);
     }
+    LOGGER.info("Treatment for id {} is {}", id, treatment);
     return map;
   }
 

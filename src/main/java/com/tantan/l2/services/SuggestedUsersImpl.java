@@ -1,10 +1,15 @@
 package com.tantan.l2.services;
 
+import com.tantan.l2.clients.AbTestClient;
 import com.tantan.l2.clients.MergerClient;
+import com.tantan.l2.clients.RankerClient;
+import com.tantan.l2.constants.AbTestKeys;
 import com.tantan.l2.models.Resp;
 import com.tantan.l2.models.User;
 import com.tantan.l2.models.UserInfoResponse;
 import com.tantan.l2.relevance.SuggestedUserRanker;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
@@ -15,11 +20,11 @@ import com.tantan.avro.AvroMetaTest;
 import com.tantan.avro.AvroUsersTest;
 import com.tantan.avro.AvroUserTest;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 @Service
 public class SuggestedUsersImpl implements SuggestedUsers {
+  private final Logger LOGGER = LoggerFactory.getLogger(this.getClass());
 
   @Autowired
   public KafkaTemplate<Integer, KafkaTest> _kafkaTemplate;
@@ -28,10 +33,22 @@ public class SuggestedUsersImpl implements SuggestedUsers {
   public MergerClient _mergerClient;
 
   @Autowired
+  private RankerClient _rankerClient;
+
+  @Autowired
   public UserInfoService _userInfoService;
 
   @Autowired
   private SuggestedUserRanker _suggestedUserRanker;
+
+  @Autowired
+  private AbTestClient _abTestClient;
+
+  private static final Set<String> AB_TEST_KEYS = new HashSet<>();
+
+  static {
+    AB_TEST_KEYS.add(AbTestKeys.SUGGESTED_USER_MODEL.name());
+  }
 
   /**
    * This method will get a user from id
@@ -43,8 +60,12 @@ public class SuggestedUsersImpl implements SuggestedUsers {
   public Resp getSuggestedUsers(Long id, Integer limit, String search, String filter, String with) {
     Resp mergerResult = _mergerClient.getUsers(id, limit, search, filter, with);
     UserInfoResponse userInfoResponse = _userInfoService.getUserInfoResponse(id, "ALL");
-    List<User> topKUsers = _suggestedUserRanker.getSuggestedUsers(id, userInfoResponse, mergerResult.getData().getUsers(), limit);
-    mergerResult.getData().setUsers(topKUsers);
+//    List<User> topKUsers = _suggestedUserRanker.getSuggestedUsers(id, userInfoResponse, mergerResult.getData().getUsers(), limit);
+//    mergerResult.getData().setUsers(topKUsers);
+
+    Map<String, String> abTestMap = _abTestClient.getTreatments(id, AB_TEST_KEYS);
+    List<User> suggestedUserList = _rankerClient.getRankerList(id, mergerResult.getData().getUsers(), abTestMap.get(AbTestKeys.SUGGESTED_USER_MODEL.name()));
+    mergerResult.getData().setUsers(suggestedUserList);
     // sendKafkaTestKafkaEvent(mergerResult);
     return mergerResult;
   }

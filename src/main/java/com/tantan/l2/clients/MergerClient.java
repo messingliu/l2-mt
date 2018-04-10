@@ -37,27 +37,27 @@ public class MergerClient {
     //Get from merger
     String url = url_link + id + "&limit=" + limit;
     //convert json to java object
-       ObjectMapper mapper = new ObjectMapper();
-       String usersFromMerger = restTemplate.getForObject(url, String.class);
-       Resp userList = null;
-       try {
-           userList = mapper.readValue(usersFromMerger, Resp.class);
-       } catch (Exception e) {
-           e.printStackTrace();
-       }
-
-       LOGGER.info("usersFromMerger data is :  " + usersFromMerger.toString());
-       return userList;
+//       ObjectMapper mapper = new ObjectMapper();
+//       String usersFromMerger = restTemplate.getForObject(url, String.class);
+//       Resp userList = null;
+//       try {
+//           userList = mapper.readValue(usersFromMerger, Resp.class);
+//       } catch (Exception e) {
+//           e.printStackTrace();
+//       }
+//
+//       LOGGER.info("usersFromMerger data is :  " + usersFromMerger.toString());
+//       return userList;
 
     //Test
-    // User user1 = new User().setId(1L).setDistance(1).setLastactivity("none").setPopularity(22).setScore(3).setType("type");
-    // User user2 = new User().setId(2L).setDistance(2).setLastactivity("none").setPopularity(33).setScore(4).setType("type");
-    // User user3 = new User().setId(3L).setDistance(3).setLastactivity("none").setPopularity(44).setScore(5).setType("type");
+     User user1 = new User().setId(1L).setDistance(1).setLastactivity("none").setPopularity(22).setScore(3).setType("type");
+     User user2 = new User().setId(2L).setDistance(2).setLastactivity("none").setPopularity(33).setScore(4).setType("type");
+     User user3 = new User().setId(3L).setDistance(3).setLastactivity("none").setPopularity(44).setScore(5).setType("type");
 
-    // List<User> userList = new ArrayList<User>();
-    // userList.add(user1);
-    // userList.add(user2);
-    // userList.add(user3);
-    // return new Resp().setMeta(new Meta(1L, "test")).setData(new UserList(userList)).setExtra(new Extra(false, 2));
+     List<User> userList = new ArrayList<User>();
+     userList.add(user1);
+     userList.add(user2);
+     userList.add(user3);
+     return new Resp().setMeta(new Meta(1L, "test")).setData(new UserList(userList)).setExtra(new Extra(false, 2));
   }
 }
