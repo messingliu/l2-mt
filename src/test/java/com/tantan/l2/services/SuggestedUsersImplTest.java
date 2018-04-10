@@ -70,7 +70,7 @@ public class SuggestedUsersImplTest {
 
   @Test
   public void testGetSuggestedUsers() {
-    User returnedUser = suggestedUsers.getSuggestedUsers(anyLong(), anyString(), anyString(), anyString(), anyString())
+    User returnedUser = suggestedUsers.getSuggestedUsers(anyLong(), anyInt(), anyString(), anyString(), anyString())
                             .getData()
                             .getUsers()
                             .get(0);

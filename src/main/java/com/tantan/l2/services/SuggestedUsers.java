@@ -8,5 +8,5 @@ public interface SuggestedUsers {
    * @param id - user id
    * @return
    */
-  public Resp getSuggestedUsers(Long id, String limit, String search, String filter, String with);
+  public Resp getSuggestedUsers(Long id, Integer limit, String search, String filter, String with);
 }
