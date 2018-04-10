@@ -40,12 +40,12 @@ public class SuggestedUsersImpl implements SuggestedUsers {
    * @return
    */
   @Override
-  public Resp getSuggestedUsers(Long id, String limit, String search, String filter, String with) {
+  public Resp getSuggestedUsers(Long id, Integer limit, String search, String filter, String with) {
     Resp mergerResult = _mergerClient.getUsers(id, limit, search, filter, with);
     UserInfoResponse userInfoResponse = _userInfoService.getUserInfoResponse(id, "ALL");
-    List<User> topKUsers = _suggestedUserRanker.getSuggestedUsers(id, userInfoResponse, mergerResult.getData().getUsers(), 1);
+    List<User> topKUsers = _suggestedUserRanker.getSuggestedUsers(id, userInfoResponse, mergerResult.getData().getUsers(), limit);
     mergerResult.getData().setUsers(topKUsers);
-    sendKafkaTestKafkaEvent(mergerResult);
+    // sendKafkaTestKafkaEvent(mergerResult);
     return mergerResult;
   }
 

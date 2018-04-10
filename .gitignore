@@ -21,3 +21,4 @@ dependency-reduced-pom.xml
 *.gz
 *.tmp
 README.html
+src/main/java/com/tantan/l2/.DS_Store

@@ -14,13 +14,13 @@ public class UsersController {
   private SuggestedUsers suggestedUsers;
 
   @RequestMapping("/users")
-  public Resp suggestedUsers(@RequestParam(value="id") Long id,
-                       @RequestParam(value="limit") String limit,
+  public Resp suggestedUsers(@RequestParam(value="user_id") Long userId,
+                       @RequestParam(value="limit", defaultValue = "25") Integer limit,
                        @RequestParam(value="search") String search,
                        @RequestParam(value="filter", defaultValue = "") String filter,
                        @RequestParam(value="with") String with) {
     //User user = new User(counter.incrementAndGet(), 1, 2, 3, "here", "type");
     //SuggestedUsers suggestedUsers = new SuggestedUsersImpl();
-    return suggestedUsers.getSuggestedUsers(id, limit, search, filter, with);
+    return suggestedUsers.getSuggestedUsers(userId, limit, search, filter, with);
   }
 }
