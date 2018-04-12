@@ -10,6 +10,7 @@ import com.tantan.l2.utils.JacksonConverter;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
@@ -17,11 +18,12 @@ import org.springframework.web.client.RestTemplate;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 @Component
 public class MergerClient {
   private final Logger LOGGER = LoggerFactory.getLogger(this.getClass());
-  private final boolean ableToCallMerger = true;
+  private final boolean ableToCallMerger = false;
   /**
    * This method will get a user from id
    *
@@ -30,7 +32,9 @@ public class MergerClient {
    */
   private final static String url_link = "http://127.0.0.1:8888/users?search=suggested,scenario-suggested" +
            "&filter=&with=contacts,questions,scenarios,user.publicMoments,relationships&user_id=";
-  public Resp getUsers(Long id, int limit, String search, String filter, String with) {
+
+  @Async
+  public CompletableFuture<Resp> getUsers(Long id, int limit, String search, String filter, String with) {
     if (ableToCallMerger) {
       //Get from merger
       RestTemplate restTemplate = new RestTemplate();
@@ -47,7 +51,7 @@ public class MergerClient {
       }
 
       LOGGER.info("usersFromMerger data is :  " + usersFromMerger.toString());
-      return resp;
+      return CompletableFuture.completedFuture(resp);
     } else {
 
       //Test
@@ -59,7 +63,9 @@ public class MergerClient {
       userList.add(user1);
       userList.add(user2);
       userList.add(user3);
-      return new Resp().setMeta(new Meta(1L, "test")).setData(new UserList(userList)).setExtra(new Extra(false, 2));
+      Resp resp = new Resp().setMeta(new Meta(1L, "test"))
+                      .setData(new UserList(userList)).setExtra(new Extra(false, 2));
+      return CompletableFuture.completedFuture(resp);
     }
   }
 }

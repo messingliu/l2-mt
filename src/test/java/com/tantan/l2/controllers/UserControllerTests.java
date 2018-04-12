@@ -22,10 +22,15 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import com.tantan.l2.builders.UserRespBuilder;
+import com.tantan.l2.models.Resp;
 import com.tantan.l2.models.User;
+import com.tantan.l2.relevance.SuggestedUserRanker;
 import com.tantan.l2.services.SuggestedUsers;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -37,6 +42,7 @@ import org.springframework.util.MultiValueMap;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -46,21 +52,34 @@ public class UserControllerTests {
     @Autowired
     private MockMvc mockMvc;
 
-    @Test
-    public void testReturnSuggestedUser() throws Exception {
-        User user = new User().setId(1L).setDistance(1).setLastactivity("none").setPopularity(22).setScore(3).setType("type");
-        List<User> userList = new ArrayList<User>();
-        userList.add(user);
-        MultiValueMap<String, String> paramMap = new LinkedMultiValueMap<String, String>();
-        paramMap.add("id", "1");
-        paramMap.add("limit", "limit_val");
-        paramMap.add("search", "search_val");
-        paramMap.add("filter", "filter_val");
-        paramMap.add("with", "with_val");
+  @MockBean
+  private SuggestedUsers _suggestedUsers;
 
-        this.mockMvc.perform(get("/users").params(paramMap))
-                .andDo(print()).andExpect(status().isOk())
-                .andExpect(jsonPath("$.data.users[0].popularity").value(44.0));
-    }
+  Resp _userResp;
+
+  @Before
+  public void setUp() {
+    _userResp = new UserRespBuilder().buildUserResp();
+    Mockito.when(_suggestedUsers.getSuggestedUsers(any(), any(), any(), any(), any()))
+        .thenReturn(CompletableFuture.completedFuture(_userResp));
+  }
+  @Test
+  public void testReturnSuggestedUser() throws Exception {
+      User user = new User().setId(1L).setDistance(1).setLastactivity("none").setPopularity(22).setScore(3).setType("type");
+      List<User> userList = new ArrayList<User>();
+      userList.add(user);
+      MultiValueMap<String, String> paramMap = new LinkedMultiValueMap<String, String>();
+      paramMap.add("user_id", "1");
+      paramMap.add("limit", "10");
+      paramMap.add("search", "search_val");
+      paramMap.add("filter", "filter_val");
+      paramMap.add("with", "with_val");
+
+      this.mockMvc.perform(get("/users").params(paramMap))
+              .andDo(print())
+              .andExpect(status().isOk())
+              .andExpect(jsonPath("$.data.users[0].popularity")
+                             .value(_userResp.getData().getUsers().get(0).getPopularity()));
+  }
 
 }

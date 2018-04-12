@@ -1,6 +1,8 @@
 package com.tantan.l2.services;
 import com.tantan.l2.models.Resp;
 
+import java.util.concurrent.CompletableFuture;
+
 
 public interface SuggestedUsers {
   /**
@@ -8,5 +10,5 @@ public interface SuggestedUsers {
    * @param id - user id
    * @return
    */
-  public Resp getSuggestedUsers(Long id, Integer limit, String search, String filter, String with);
+  public CompletableFuture<Resp> getSuggestedUsers(Long id, Integer limit, String search, String filter, String with);
 }

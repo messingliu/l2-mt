@@ -12,6 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.core.KafkaTemplate;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import com.tantan.avro.KafkaTest;
 import com.tantan.avro.AvroExtraTest;
@@ -21,6 +22,7 @@ import com.tantan.avro.AvroUsersTest;
 import com.tantan.avro.AvroUserTest;
 
 import java.util.*;
+import java.util.concurrent.CompletableFuture;
 
 @Service
 public class SuggestedUsersImpl implements SuggestedUsers {
@@ -57,17 +59,24 @@ public class SuggestedUsersImpl implements SuggestedUsers {
    * @return
    */
   @Override
-  public Resp getSuggestedUsers(Long id, Integer limit, String search, String filter, String with) {
-    Resp mergerResult = _mergerClient.getUsers(id, limit, search, filter, with);
-    UserInfoResponse userInfoResponse = _userInfoService.getUserInfoResponse(id, "ALL");
+  @Async
+  public CompletableFuture<Resp> getSuggestedUsers(Long id, Integer limit, String search, String filter, String with) {
+    LOGGER.info("Looking up1 ");
+
+    CompletableFuture<Resp> mergerResult = _mergerClient.getUsers(id, limit, search, filter, with);
+    return mergerResult.thenCompose(result -> {
+      UserInfoResponse userInfoResponse = _userInfoService.getUserInfoResponse(id, "ALL");
 //    List<User> topKUsers = _suggestedUserRanker.getSuggestedUsers(id, userInfoResponse, mergerResult.getData().getUsers(), limit);
 //    mergerResult.getData().setUsers(topKUsers);
 
-    Map<String, String> abTestMap = _abTestClient.getTreatments(id, AB_TEST_KEYS);
-    List<User> suggestedUserList = _rankerClient.getRankerList(id, mergerResult.getData().getUsers(), abTestMap.get(AbTestKeys.SUGGESTED_USER_MODEL.name()));
-    mergerResult.getData().setUsers(suggestedUserList);
+      Map<String, String> abTestMap = _abTestClient.getTreatments(id, AB_TEST_KEYS);
+      CompletableFuture<List<User>> suggestedUserList = _rankerClient.getRankerList(id, result.getData().getUsers(), abTestMap.get(AbTestKeys.SUGGESTED_USER_MODEL.name()));
+      return suggestedUserList.thenApply(userList -> {
+        result.getData().setUsers(userList);
+        return result;
+      });
+    });
     // sendKafkaTestKafkaEvent(mergerResult);
-    return mergerResult;
   }
 
   public void sendKafkaTestKafkaEvent(Resp mergerResult) {

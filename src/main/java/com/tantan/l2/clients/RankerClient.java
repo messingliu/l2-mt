@@ -5,6 +5,7 @@ import com.tantan.l2.models.*;
 import com.tantan.l2.utils.JacksonConverter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -14,6 +15,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
 @Component
@@ -31,7 +33,8 @@ public class RankerClient {
   private final static String url_link =
       "http://localhost:8008/ranker";
 
-  public List<User> getRankerList(Long id, List<User> inputUserList, String linearModelParameter) {
+  @Async
+  public CompletableFuture<List<User>> getRankerList(Long id, List<User> inputUserList, String linearModelParameter) {
 
     // URI (URL) parameters
     Map<String, Object> uriParams = new HashMap<>();
@@ -68,6 +71,6 @@ public class RankerClient {
     for (Object userIdObject: userIdList) {
       outputUserList.add(userMap.get(Long.parseLong(userIdObject.toString())));
     }
-    return outputUserList;
+    return CompletableFuture.completedFuture(outputUserList);
   }
 }

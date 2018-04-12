@@ -15,12 +15,16 @@ import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.kafka.core.KafkaTemplate;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Executor;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.*;
@@ -55,7 +59,7 @@ public class SuggestedUsersImplTest {
   public void setUp() {
     Resp userResp = new UserRespBuilder().buildUserResp();
     Mockito.when(_mergerClient.getUsers(any(), any(), any(), any(), any()))
-        .thenReturn(userResp);
+        .thenReturn(CompletableFuture.completedFuture(userResp));
 
     Mockito.when(_suggestedUserRanker.getSuggestedUsers(anyLong(), any(), anyList(), anyInt()))
         .thenReturn(userResp.getData().getUsers().subList(0,1));
@@ -69,8 +73,9 @@ public class SuggestedUsersImplTest {
 
 
   @Test
-  public void testGetSuggestedUsers() {
+  public void testGetSuggestedUsers() throws ExecutionException, InterruptedException {
     User returnedUser = suggestedUsers.getSuggestedUsers(anyLong(), anyInt(), anyString(), anyString(), anyString())
+                            .get()
                             .getData()
                             .getUsers()
                             .get(0);
