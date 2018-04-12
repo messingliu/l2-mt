@@ -23,7 +23,7 @@ import java.util.concurrent.CompletableFuture;
 @Component
 public class MergerClient {
   private final Logger LOGGER = LoggerFactory.getLogger(this.getClass());
-  private final boolean ableToCallMerger = false;
+  private final boolean ableToCallMerger = true;
   /**
    * This method will get a user from id
    *

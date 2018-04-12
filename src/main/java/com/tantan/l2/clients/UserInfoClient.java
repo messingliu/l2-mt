@@ -25,7 +25,7 @@ public class UserInfoClient {
     //TODO: mock here
     Map<String, String> record = new HashMap<String, String>();
     record.put("REC_ID", "REC_ID1");
-    record.put("id", "id1");
+    record.put("id", "1");
     UserInfoResponse res = new UserInfoResponse();
     res.setType("ALL");
     res.setReason("reason");
