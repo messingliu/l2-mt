@@ -17,6 +17,7 @@ package com.tantan.l2.controllers;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.asyncDispatch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -37,6 +38,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 
@@ -49,8 +51,8 @@ import java.util.concurrent.CompletableFuture;
 @AutoConfigureMockMvc
 public class UserControllerTests {
 
-    @Autowired
-    private MockMvc mockMvc;
+  @Autowired
+  private MockMvc mockMvc;
 
   @MockBean
   private SuggestedUsers _suggestedUsers;
@@ -63,23 +65,25 @@ public class UserControllerTests {
     Mockito.when(_suggestedUsers.getSuggestedUsers(any(), any(), any(), any(), any()))
         .thenReturn(CompletableFuture.completedFuture(_userResp));
   }
+
   @Test
   public void testReturnSuggestedUser() throws Exception {
-      User user = new User().setId(1L).setDistance(1).setLastactivity("none").setPopularity(22).setScore(3).setType("type");
-      List<User> userList = new ArrayList<User>();
-      userList.add(user);
-      MultiValueMap<String, String> paramMap = new LinkedMultiValueMap<String, String>();
-      paramMap.add("user_id", "1");
-      paramMap.add("limit", "10");
-      paramMap.add("search", "search_val");
-      paramMap.add("filter", "filter_val");
-      paramMap.add("with", "with_val");
+    User user = new User().setId(1L).setDistance(1).setLastactivity("none").setPopularity(22).setScore(3).setType("type");
+    List<User> userList = new ArrayList<User>();
+    userList.add(user);
+    MultiValueMap<String, String> paramMap = new LinkedMultiValueMap<String, String>();
+    paramMap.add("user_id", "1");
+    paramMap.add("limit", "10");
+    paramMap.add("search", "search_val");
+    paramMap.add("filter", "filter_val");
+    paramMap.add("with", "with_val");
 
-      this.mockMvc.perform(get("/users").params(paramMap))
-              .andDo(print())
-              .andExpect(status().isOk())
-              .andExpect(jsonPath("$.data.users[0].popularity")
-                             .value(_userResp.getData().getUsers().get(0).getPopularity()));
+    MvcResult result = mockMvc.perform(get("/users").params(paramMap)).andReturn();
+    this.mockMvc.perform(asyncDispatch(result))
+        .andDo(print())
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.data.users[0].popularity")
+                       .value(_userResp.getData().getUsers().get(0).getPopularity()));
   }
 
 }
