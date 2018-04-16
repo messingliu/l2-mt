@@ -21,13 +21,13 @@ public class UsersController {
   private SuggestedUsers suggestedUsers;
 
   @RequestMapping("/users")
-  public Resp suggestedUsers(@RequestParam(value="user_id") Long userId,
+  public CompletableFuture<Resp> suggestedUsers(@RequestParam(value="user_id") Long userId,
                        @RequestParam(value="limit", defaultValue = "25") Integer limit,
                        @RequestParam(value="search") String search,
                        @RequestParam(value="filter", defaultValue = "") String filter,
                        @RequestParam(value="with") String with) throws ExecutionException, InterruptedException {
     //User user = new User(counter.incrementAndGet(), 1, 2, 3, "here", "type");
     //SuggestedUsers suggestedUsers = new SuggestedUsersImpl();
-    return suggestedUsers.getSuggestedUsers(userId, limit, search, filter, with).get();
+    return suggestedUsers.getSuggestedUsers(userId, limit, search, filter, with);
   }
 }

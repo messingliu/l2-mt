@@ -63,8 +63,14 @@ public class MergerClient {
       userList.add(user1);
       userList.add(user2);
       userList.add(user3);
+
+      String url = "http://localhost:8010/mockMerger?search=suggested,scenario-suggested&filter=&with=contacts," +
+                            "questions,scenarios,user.publicMoments,relationships&user_id=1&limit=10\n";
       Resp resp = new Resp().setMeta(new Meta(1L, "test"))
                       .setData(new UserList(userList)).setExtra(new Extra(false, 2));
+      RestTemplate restTemplate = new RestTemplate();
+      restTemplate.getMessageConverters().add(new JacksonConverter());
+      restTemplate.getForObject(url, String.class);
       return CompletableFuture.completedFuture(resp);
     }
   }
