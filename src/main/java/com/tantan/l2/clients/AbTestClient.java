@@ -29,7 +29,7 @@ public class AbTestClient {
     for(String key: testKeys) {
       map.put(key,treatment);
     }
-    LOGGER.info("Treatment for id {} is {}", id, treatment);
+    //LOGGER.info("Treatment for id {} is {}", id, treatment);
     return map;
   }
 

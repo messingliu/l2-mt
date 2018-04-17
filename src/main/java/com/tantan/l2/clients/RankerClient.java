@@ -52,7 +52,7 @@ public class RankerClient {
                                        .queryParam("modelId", 0)
                                        .queryParam("linearModelParameter", linearModelParameter);
 
-    LOGGER.info("Ranking URL from url builder: " + builder.buildAndExpand(uriParams).toUri());
+    //LOGGER.info("Ranking URL from url builder: " + builder.buildAndExpand(uriParams).toUri());
 
     //Get from ranker
     String url = null;
@@ -66,7 +66,7 @@ public class RankerClient {
     RestTemplate restTemplate = new RestTemplate();
     restTemplate.getMessageConverters().add(new JacksonConverter());
     List<Object> userIdList = restTemplate.getForObject(url, List.class);
-    LOGGER.info("userIdList data is :  " + userIdList);
+    //LOGGER.info("userIdList data is :  " + userIdList);
     List<User> outputUserList = new ArrayList<>();
     for (Object userIdObject: userIdList) {
       outputUserList.add(userMap.get(Long.parseLong(userIdObject.toString())));
