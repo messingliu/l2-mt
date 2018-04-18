@@ -1,6 +1,7 @@
 package com.tantan.l2.clients;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.tantan.l2.constants.LogConstants;
 import com.tantan.l2.models.Resp;
 import com.tantan.l2.models.User;
 import com.tantan.l2.models.UserList;
@@ -23,7 +24,7 @@ import java.util.concurrent.CompletableFuture;
 @Component
 public class MergerClient {
   private final Logger LOGGER = LoggerFactory.getLogger(this.getClass());
-  private final boolean ableToCallMerger = true;
+  private final boolean ableToCallMerger = false;
   /**
    * This method will get a user from id
    *
@@ -35,6 +36,8 @@ public class MergerClient {
 
   @Async
   public CompletableFuture<Resp> getUsers(Long id, int limit, String search, String filter, String with) {
+    long startTime = System.currentTimeMillis();
+
     if (ableToCallMerger) {
       //Get from merger
       RestTemplate restTemplate = new RestTemplate();
@@ -51,6 +54,10 @@ public class MergerClient {
       }
 
       LOGGER.info("usersFromMerger data is :  " + usersFromMerger.toString());
+      long endTime = System.currentTimeMillis();
+      LOGGER.info("[{}: {}][{}: {}][{}: {}]", LogConstants.LOGO_TYPE, LogConstants.CLIENT_CALL,
+              LogConstants.CLIENT_NAME, LogConstants.MERGER, LogConstants.RESPONSE_TIME, endTime - startTime,
+              LogConstants.DATA_SIZE, resp.getData().getUsers().size());
       return CompletableFuture.completedFuture(resp);
     } else {
 
@@ -71,6 +78,10 @@ public class MergerClient {
       RestTemplate restTemplate = new RestTemplate();
       restTemplate.getMessageConverters().add(new JacksonConverter());
       restTemplate.getForObject(url, String.class);
+      long endTime = System.currentTimeMillis();
+      LOGGER.info("[{}: {}][{}: {}][{}: {}][{}: {}]", LogConstants.LOGO_TYPE, LogConstants.CLIENT_CALL,
+              LogConstants.CLIENT_NAME, LogConstants.MERGER, LogConstants.RESPONSE_TIME, endTime - startTime,
+              LogConstants.DATA_SIZE, userList.size());
       return CompletableFuture.completedFuture(resp);
     }
   }
