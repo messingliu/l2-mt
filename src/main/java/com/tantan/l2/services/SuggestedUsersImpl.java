@@ -61,7 +61,6 @@ public class SuggestedUsersImpl implements SuggestedUsers {
   @Override
   @Async
   public CompletableFuture<Resp> getSuggestedUsers(Long id, Integer limit, String search, String filter, String with) {
-    LOGGER.info("Looking up1 ");
 
     CompletableFuture<Resp> mergerResult = _mergerClient.getUsers(id, limit, search, filter, with);
     return mergerResult.thenCompose(result -> {
@@ -75,6 +74,9 @@ public class SuggestedUsersImpl implements SuggestedUsers {
         result.getData().setUsers(userList);
         return result;
       });
+    }).exceptionally(e -> {
+      LOGGER.error("Error in getting suggested users for user ID: " + id, e);
+      return null;
     });
     // sendKafkaTestKafkaEvent(mergerResult);
   }
