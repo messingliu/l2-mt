@@ -41,7 +41,7 @@ public class MergerClient {
     if (ableToCallMerger) {
       url = url_link + id + "&limit=" + limit;
     } else {
-      url = "http://localhost:8010/mockMerger?search=suggested,scenario-suggested&filter=&with=contacts," +
+      url = "http://10.189.100.43:8010/mockMerger?search=suggested,scenario-suggested&filter=&with=contacts," +
               "questions,scenarios,user.publicMoments,relationships&user_id=" + id + "&limit=" + limit;
     }
     //Get from merger

@@ -32,7 +32,7 @@ public class RankerClient {
 //  private final static String url_link =
 //      "http://localhost:8008/ranker?id=1&candidateIds=8,2,3,4&modelId=0&linearModelParameter=popularity:0!type:0.5!distance:0.5";
   private final static String url_link =
-      "http://localhost:8008/ranker";
+      "http://10.189.100.40:8008/ranker";
 
   @Async
   public CompletableFuture<List<User>> getRankerList(Long id, List<User> inputUserList, String linearModelParameter) {
