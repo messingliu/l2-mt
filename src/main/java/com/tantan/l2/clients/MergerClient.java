@@ -1,6 +1,7 @@
 package com.tantan.l2.clients;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.tantan.l2.constants.LogConstants;
 import com.tantan.l2.models.Resp;
 import com.tantan.l2.models.User;
 import com.tantan.l2.models.UserList;
@@ -23,7 +24,7 @@ import java.util.concurrent.CompletableFuture;
 @Component
 public class MergerClient {
   private final Logger LOGGER = LoggerFactory.getLogger(this.getClass());
-  private final boolean ableToCallMerger = true;
+  private final boolean ableToCallMerger = false;
   /**
    * This method will get a user from id
    *
@@ -35,43 +36,32 @@ public class MergerClient {
 
   @Async
   public CompletableFuture<Resp> getUsers(Long id, int limit, String search, String filter, String with) {
+    long startTime = System.currentTimeMillis();
+    String url = null;
     if (ableToCallMerger) {
-      //Get from merger
-      RestTemplate restTemplate = new RestTemplate();
-      restTemplate.getMessageConverters().add(new JacksonConverter());
-      String url = url_link + id + "&limit=" + limit;
-      //convert json to java object
-      ObjectMapper mapper = new ObjectMapper();
-      String usersFromMerger = restTemplate.getForObject(url, String.class);
-      Resp resp = null;
-      try {
-        resp = mapper.readValue(usersFromMerger, Resp.class);
-      } catch (Exception e) {
-        e.printStackTrace();
-      }
-
-      LOGGER.info("usersFromMerger data is :  " + usersFromMerger.toString());
-      return CompletableFuture.completedFuture(resp);
+      url = url_link + id + "&limit=" + limit;
     } else {
-
-      //Test
-      User user1 = new User().setId(1L).setDistance(1).setLastactivity("none").setPopularity(22).setScore(3).setType("type");
-      User user2 = new User().setId(2L).setDistance(2).setLastactivity("none").setPopularity(33).setScore(4).setType("type");
-      User user3 = new User().setId(3L).setDistance(3).setLastactivity("none").setPopularity(44).setScore(5).setType("type");
-
-      List<User> userList = new ArrayList<User>();
-      userList.add(user1);
-      userList.add(user2);
-      userList.add(user3);
-
-      String url = "http://localhost:8010/mockMerger?search=suggested,scenario-suggested&filter=&with=contacts," +
-                            "questions,scenarios,user.publicMoments,relationships&user_id=1&limit=10\n";
-      Resp resp = new Resp().setMeta(new Meta(1L, "test"))
-                      .setData(new UserList(userList)).setExtra(new Extra(false, 2));
-      RestTemplate restTemplate = new RestTemplate();
-      restTemplate.getMessageConverters().add(new JacksonConverter());
-      restTemplate.getForObject(url, String.class);
-      return CompletableFuture.completedFuture(resp);
+      url = "http://localhost:8010/mockMerger?search=suggested,scenario-suggested&filter=&with=contacts," +
+              "questions,scenarios,user.publicMoments,relationships&user_id=" + id + "&limit=" + limit;
     }
+    //Get from merger
+    RestTemplate restTemplate = new RestTemplate();
+    restTemplate.getMessageConverters().add(new JacksonConverter());
+    //convert json to java object
+    ObjectMapper mapper = new ObjectMapper();
+    String usersFromMerger = restTemplate.getForObject(url, String.class);
+    Resp resp = null;
+    try {
+      resp = mapper.readValue(usersFromMerger, Resp.class);
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+
+    LOGGER.info("usersFromMerger data is :  " + usersFromMerger.toString());
+    long endTime = System.currentTimeMillis();
+    LOGGER.info("[{}: {}][{}: {}][{}: {}]", LogConstants.LOGO_TYPE, LogConstants.CLIENT_CALL,
+            LogConstants.CLIENT_NAME, LogConstants.MERGER, LogConstants.RESPONSE_TIME, endTime - startTime,
+            LogConstants.DATA_SIZE, resp.getData().getUsers().size());
+    return CompletableFuture.completedFuture(resp);
   }
 }

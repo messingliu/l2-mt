@@ -19,9 +19,9 @@ public class Application {
   @Bean
   public Executor asyncExecutor() {
     ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
-    executor.setCorePoolSize(2);
-    executor.setMaxPoolSize(2);
-    executor.setQueueCapacity(500);
+    executor.setCorePoolSize(2000);
+    executor.setMaxPoolSize(4000);
+    executor.setQueueCapacity(4000);
     executor.setThreadNamePrefix("l2-mt-");
     executor.initialize();
     return executor;

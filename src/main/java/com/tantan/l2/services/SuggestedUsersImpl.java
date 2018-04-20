@@ -4,6 +4,7 @@ import com.tantan.l2.clients.AbTestClient;
 import com.tantan.l2.clients.MergerClient;
 import com.tantan.l2.clients.RankerClient;
 import com.tantan.l2.constants.AbTestKeys;
+import com.tantan.l2.constants.LogConstants;
 import com.tantan.l2.models.Resp;
 import com.tantan.l2.models.User;
 import com.tantan.l2.models.UserInfoResponse;
@@ -20,6 +21,7 @@ import com.tantan.avro.AvroExtraTest;
 import com.tantan.avro.AvroMetaTest;
 import com.tantan.avro.AvroUsersTest;
 import com.tantan.avro.AvroUserTest;
+import sun.rmi.runtime.Log;
 
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
@@ -61,8 +63,6 @@ public class SuggestedUsersImpl implements SuggestedUsers {
   @Override
   @Async
   public CompletableFuture<Resp> getSuggestedUsers(Long id, Integer limit, String search, String filter, String with) {
-    LOGGER.info("Looking up1 ");
-
     CompletableFuture<Resp> mergerResult = _mergerClient.getUsers(id, limit, search, filter, with);
     return mergerResult.thenCompose(result -> {
       UserInfoResponse userInfoResponse = _userInfoService.getUserInfoResponse(id, "ALL");
@@ -75,6 +75,9 @@ public class SuggestedUsersImpl implements SuggestedUsers {
         result.getData().setUsers(userList);
         return result;
       });
+    }).exceptionally(e -> {
+      LOGGER.error("Error in getting suggested users for user ID: " + id, e);
+      return null;
     });
     // sendKafkaTestKafkaEvent(mergerResult);
   }

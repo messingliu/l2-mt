@@ -1,6 +1,7 @@
 package com.tantan.l2.clients;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.tantan.l2.constants.LogConstants;
 import com.tantan.l2.models.*;
 import com.tantan.l2.utils.JacksonConverter;
 import org.slf4j.Logger;
@@ -52,21 +53,25 @@ public class RankerClient {
                                        .queryParam("modelId", 0)
                                        .queryParam("linearModelParameter", linearModelParameter);
 
-    //LOGGER.info("Ranking URL from url builder: " + builder.buildAndExpand(uriParams).toUri());
+    LOGGER.info("Ranking URL from url builder: " + builder.buildAndExpand(uriParams).toUri());
 
     //Get from ranker
     String url = null;
     try {
       url = builder.buildAndExpand(uriParams).toUri().toURL().toString();
     } catch (MalformedURLException e) {
-      LOGGER.info("Error in building url for ranking id " + id, e);
+      LOGGER.error("Error in building url for ranking id " + id, e);
       e.printStackTrace();
     }
     //convert json to java object
     RestTemplate restTemplate = new RestTemplate();
     restTemplate.getMessageConverters().add(new JacksonConverter());
+    long startTime = System.currentTimeMillis();
     List<Object> userIdList = restTemplate.getForObject(url, List.class);
-    //LOGGER.info("userIdList data is :  " + userIdList);
+    long endTime = System.currentTimeMillis();
+    LOGGER.info("[{}: {}][{}: {}][{}: {}]", LogConstants.LOGO_TYPE, LogConstants.CLIENT_CALL,
+            LogConstants.CLIENT_NAME, LogConstants.RANKER, LogConstants.RESPONSE_TIME, endTime - startTime);
+    LOGGER.info("userIdList data is :  " + userIdList);
     List<User> outputUserList = new ArrayList<>();
     for (Object userIdObject: userIdList) {
       outputUserList.add(userMap.get(Long.parseLong(userIdObject.toString())));
