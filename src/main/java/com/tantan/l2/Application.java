@@ -9,21 +9,21 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import java.util.concurrent.Executor;
 
 @SpringBootApplication
-@EnableAsync
+//@EnableAsync
 public class Application {
 
   public static void main(String[] args) {
     SpringApplication.run(Application.class, args);
   }
 
-  @Bean
-  public Executor asyncExecutor() {
-    ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
-    executor.setCorePoolSize(5000);
-    executor.setMaxPoolSize(50000);
-    executor.setQueueCapacity(1000000);
-    executor.setThreadNamePrefix("l2-mt-");
-    executor.initialize();
-    return executor;
-  }
+//  @Bean
+//  public Executor asyncExecutor() {
+//    ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
+//    executor.setCorePoolSize(5000);
+//    executor.setMaxPoolSize(50000);
+//    executor.setQueueCapacity(1000000);
+//    executor.setThreadNamePrefix("l2-mt-");
+//    executor.initialize();
+//    return executor;
+//  }
 }
