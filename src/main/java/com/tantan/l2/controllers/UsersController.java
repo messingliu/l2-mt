@@ -21,7 +21,7 @@ public class UsersController {
   private SuggestedUsers suggestedUsers;
 
   @RequestMapping("/users")
-  public CompletableFuture<Resp> suggestedUsers(@RequestParam(value="user_id") Long userId,
+  public Resp suggestedUsers(@RequestParam(value="user_id") Long userId,
                        @RequestParam(value="limit", defaultValue = "25") Integer limit,
                        @RequestParam(value="search") String search,
                        @RequestParam(value="filter", defaultValue = "") String filter,

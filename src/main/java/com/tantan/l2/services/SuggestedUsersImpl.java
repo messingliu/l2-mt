@@ -61,24 +61,12 @@ public class SuggestedUsersImpl implements SuggestedUsers {
    * @return
    */
   @Override
-  @Async
-  public CompletableFuture<Resp> getSuggestedUsers(Long id, Integer limit, String search, String filter, String with) {
-    CompletableFuture<Resp> mergerResult = _mergerClient.getUsers(id, limit, search, filter, with);
-    return mergerResult.thenCompose(result -> {
-      UserInfoResponse userInfoResponse = _userInfoService.getUserInfoResponse(id, "ALL");
-//    List<User> topKUsers = _suggestedUserRanker.getSuggestedUsers(id, userInfoResponse, mergerResult.getData().getUsers(), limit);
-//    mergerResult.getData().setUsers(topKUsers);
-
-      Map<String, String> abTestMap = _abTestClient.getTreatments(id, AB_TEST_KEYS);
-      CompletableFuture<List<User>> suggestedUserList = _rankerClient.getRankerList(id, result.getData().getUsers(), abTestMap.get(AbTestKeys.SUGGESTED_USER_MODEL.name()));
-      return suggestedUserList.thenApply(userList -> {
-        result.getData().setUsers(userList);
-        return result;
-      });
-    }).exceptionally(e -> {
-      LOGGER.error("Error in getting suggested users for user ID: " + id, e);
-      return null;
-    });
+  public Resp getSuggestedUsers(Long id, Integer limit, String search, String filter, String with) {
+    Resp mergerResult = _mergerClient.getUsers(id, limit, search, filter, with);
+    Map<String, String> abTestMap = _abTestClient.getTreatments(id, AB_TEST_KEYS);
+    List<User> suggestedUserList = _rankerClient.getRankerList(id, mergerResult.getData().getUsers(), abTestMap.get(AbTestKeys.SUGGESTED_USER_MODEL.name()));
+    mergerResult.getData().setUsers(suggestedUserList);
+    return mergerResult;
     // sendKafkaTestKafkaEvent(mergerResult);
   }
 

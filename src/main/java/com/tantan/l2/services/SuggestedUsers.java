@@ -10,5 +10,5 @@ public interface SuggestedUsers {
    * @param id - user id
    * @return
    */
-  public CompletableFuture<Resp> getSuggestedUsers(Long id, Integer limit, String search, String filter, String with);
+  public Resp getSuggestedUsers(Long id, Integer limit, String search, String filter, String with);
 }

@@ -34,8 +34,7 @@ public class MergerClient {
   private final static String url_link = "http://127.0.0.1:8888/users?search=suggested,scenario-suggested" +
            "&filter=&with=contacts,questions,scenarios,user.publicMoments,relationships&user_id=";
 
-  @Async
-  public CompletableFuture<Resp> getUsers(Long id, int limit, String search, String filter, String with) {
+  public Resp getUsers(Long id, int limit, String search, String filter, String with) {
     long startTime = System.currentTimeMillis();
     String url = null;
     if (ableToCallMerger) {
@@ -62,6 +61,6 @@ public class MergerClient {
     LOGGER.info("[{}: {}][{}: {}][{}: {}]", LogConstants.LOGO_TYPE, LogConstants.CLIENT_CALL,
             LogConstants.CLIENT_NAME, LogConstants.MERGER, LogConstants.RESPONSE_TIME, endTime - startTime,
             LogConstants.DATA_SIZE, resp.getData().getUsers().size());
-    return CompletableFuture.completedFuture(resp);
+    return resp;
   }
 }

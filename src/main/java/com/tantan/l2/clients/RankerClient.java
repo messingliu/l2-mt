@@ -34,8 +34,7 @@ public class RankerClient {
   private final static String url_link =
       "http://10.189.100.40:8008/ranker";
 
-  @Async
-  public CompletableFuture<List<User>> getRankerList(Long id, List<User> inputUserList, String linearModelParameter) {
+  public List<User> getRankerList(Long id, List<User> inputUserList, String linearModelParameter) {
 
     // URI (URL) parameters
     Map<String, Object> uriParams = new HashMap<>();
@@ -76,6 +75,6 @@ public class RankerClient {
     for (Object userIdObject: userIdList) {
       outputUserList.add(userMap.get(Long.parseLong(userIdObject.toString())));
     }
-    return CompletableFuture.completedFuture(outputUserList);
+    return outputUserList;
   }
 }
