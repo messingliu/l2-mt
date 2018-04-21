@@ -12,9 +12,9 @@ import java.util.concurrent.Executor;
 //@EnableAsync
 public class Application {
 
-  public static void main(String[] args) {
-    SpringApplication.run(Application.class, args);
-  }
+    public static void main(String[] args) {
+        SpringApplication.run(Application.class, args);
+    }
 
 //  @Bean
 //  public Executor asyncExecutor() {
@@ -27,5 +27,6 @@ public class Application {
 //    executor.setThreadNamePrefix("l2-mt-");
 //    executor.initialize();
 //    return executor;
-  }
+
+
 }
