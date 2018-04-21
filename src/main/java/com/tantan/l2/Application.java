@@ -22,6 +22,8 @@ public class Application {
     executor.setCorePoolSize(5000);
     executor.setMaxPoolSize(50000);
     executor.setQueueCapacity(1000000);
+    executor.setWaitForTasksToCompleteOnShutdown(true);
+    executor.setAwaitTerminationSeconds(60);
     executor.setThreadNamePrefix("l2-mt-");
     executor.initialize();
     return executor;
