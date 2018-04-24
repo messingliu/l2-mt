@@ -66,8 +66,8 @@ public class SuggestedUsersImpl implements SuggestedUsers {
     Resp mergerResult = _mergerClient.getUsers(id, limit, search, filter, with);
     Map<String, String> abTestMap = _abTestClient.getTreatments(id, AB_TEST_KEYS);
     List<User> suggestedUserList = null;
-    if (callMultipleRanker) {
-      _rankerClient.getRankerList(id, mergerResult.getData().getUsers(), abTestMap.get(AbTestKeys.SUGGESTED_USER_MODEL.name()), 0);
+    if (!callMultipleRanker) {
+      _rankerClient.getRankerList(id, mergerResult.getData().getUsers(), abTestMap.get(AbTestKeys.SUGGESTED_USER_MODEL.name()), 3);
     } else {
       List<User> mergerUsers = mergerResult.getData().getUsers();
       for (int i = 0; i < 5; i ++) {
