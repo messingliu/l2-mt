@@ -31,10 +31,15 @@ public class RankerClient {
    */
 //  private final static String url_link =
 //      "http://localhost:8008/ranker?id=1&candidateIds=8,2,3,4&modelId=0&linearModelParameter=popularity:0!type:0.5!distance:0.5";
-  private final static String url_link =
-      "http://10.189.100.40:8008/ranker";
+  private final static String[] url_link = {
+          "http://10.189.100.34:8008/ranker",
+          "http://10.189.100.35:8008/ranker",
+          "http://10.189.100.37:8008/ranker",
+          "http://10.189.100.40:8008/ranker",
+          "http://10.189.100.41:8008/ranker"
+  };
 
-  public List<User> getRankerList(Long id, List<User> inputUserList, String linearModelParameter) {
+  public List<User> getRankerList(Long id, List<User> inputUserList, String linearModelParameter, int rankerId) {
 
     // URI (URL) parameters
     Map<String, Object> uriParams = new HashMap<>();
@@ -46,7 +51,7 @@ public class RankerClient {
     }
     String listOfIds = candidateIds.stream().map(Object::toString).collect(Collectors.joining(","));
     // Query parameters
-    UriComponentsBuilder builder = UriComponentsBuilder.fromUriString(url_link)
+    UriComponentsBuilder builder = UriComponentsBuilder.fromUriString(url_link[rankerId])
                                        .queryParam("candidateIds", listOfIds)
                                        .queryParam("id", id)
                                        .queryParam("modelId", 0)

@@ -49,6 +49,7 @@ public class SuggestedUsersImpl implements SuggestedUsers {
   private AbTestClient _abTestClient;
 
   private static final Set<String> AB_TEST_KEYS = new HashSet<>();
+  private static final boolean callMultipleRanker = false;
 
   static {
     AB_TEST_KEYS.add(AbTestKeys.SUGGESTED_USER_MODEL.name());
@@ -64,7 +65,15 @@ public class SuggestedUsersImpl implements SuggestedUsers {
   public Resp getSuggestedUsers(Long id, Integer limit, String search, String filter, String with) {
     Resp mergerResult = _mergerClient.getUsers(id, limit, search, filter, with);
     Map<String, String> abTestMap = _abTestClient.getTreatments(id, AB_TEST_KEYS);
-    List<User> suggestedUserList = _rankerClient.getRankerList(id, mergerResult.getData().getUsers(), abTestMap.get(AbTestKeys.SUGGESTED_USER_MODEL.name()));
+    List<User> suggestedUserList = null;
+    if (callMultipleRanker) {
+      _rankerClient.getRankerList(id, mergerResult.getData().getUsers(), abTestMap.get(AbTestKeys.SUGGESTED_USER_MODEL.name()), 0);
+    } else {
+      List<User> mergerUsers = mergerResult.getData().getUsers();
+      for (int i = 0; i < 5; i ++) {
+        suggestedUserList =  _rankerClient.getRankerList(id, mergerUsers.subList(2000 * i, 2000 * (i + 1)), abTestMap.get(AbTestKeys.SUGGESTED_USER_MODEL.name()), i);
+      }
+    }
     mergerResult.getData().setUsers(suggestedUserList);
     return mergerResult;
     // sendKafkaTestKafkaEvent(mergerResult);
