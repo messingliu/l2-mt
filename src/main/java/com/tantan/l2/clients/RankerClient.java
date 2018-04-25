@@ -58,7 +58,6 @@ public class RankerClient {
                                        .queryParam("modelId", 0)
                                        .queryParam("linearModelParameter", linearModelParameter);
 
-    LOGGER.info("Ranking URL from url builder: " + builder.buildAndExpand(uriParams).toUri());
 
     //Get from ranker
     String url = null;

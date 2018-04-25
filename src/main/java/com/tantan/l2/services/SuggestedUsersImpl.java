@@ -84,12 +84,14 @@ public class SuggestedUsersImpl implements SuggestedUsers {
 
     List<User> suggestedUserList = new ArrayList<>();
     if (!callMultipleRanker) {
-        suggestedUserList = _rankerClient.getRankerList(id, mergerResult.getData().getUsers(),
-                abTestMap.get(AbTestKeys.SUGGESTED_USER_MODEL.name()), 3);
+      List<User> mergerUsers = mergerResult.getData().getUsers();
+      int oneListSize = Math.min(2000, mergerUsers.size() / 5);
+      suggestedUserList = _rankerClient.getRankerList(id, mergerUsers.subList(0, oneListSize),
+              abTestMap.get(AbTestKeys.SUGGESTED_USER_MODEL.name()), 3);
     } else {
       List<CompletableFuture<List<User>>> suggestedUserListFuture = new ArrayList<CompletableFuture<List<User>>>();
       List<User> mergerUsers = mergerResult.getData().getUsers();
-      int oneListSize = mergerUsers.size() / 5;
+      int oneListSize = Math.min(2000, mergerUsers.size() / 5);
       for (int i = 0; i < 5; i ++) {
         final int threadId = i;
         suggestedUserListFuture.add(i, CompletableFuture.supplyAsync(() -> {return _rankerClient.getRankerList(id, mergerUsers.subList(oneListSize * threadId, oneListSize * (threadId + 1)),
@@ -97,8 +99,6 @@ public class SuggestedUsersImpl implements SuggestedUsers {
       }
       suggestedUserList = Stream.of(suggestedUserListFuture.get(0), suggestedUserListFuture.get(1), suggestedUserListFuture.get(2),
               suggestedUserListFuture.get(3), suggestedUserListFuture.get(4)).map(CompletableFuture::join).collect(Collectors.toList()).get(2);
-      LOGGER.info("suggestedUserList is {}", suggestedUserList);
-
     }
     mergerResult.getData().setUsers(suggestedUserList);
     long endTime = System.currentTimeMillis();
