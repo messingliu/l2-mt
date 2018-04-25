@@ -27,6 +27,10 @@ import sun.rmi.runtime.Log;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Service
 public class SuggestedUsersImpl implements SuggestedUsers {
@@ -51,7 +55,7 @@ public class SuggestedUsersImpl implements SuggestedUsers {
   private AbTestClient _abTestClient;
 
   private static final Set<String> AB_TEST_KEYS = new HashSet<>();
-  private static final boolean callMultipleRanker = false;
+  private static final boolean callMultipleRanker = true;
 
   static {
     AB_TEST_KEYS.add(AbTestKeys.SUGGESTED_USER_MODEL.name());
@@ -77,37 +81,24 @@ public class SuggestedUsersImpl implements SuggestedUsers {
     }
     Map<String, String> abTestMap = _abTestClient.getTreatments(id, AB_TEST_KEYS);
     long startTime = System.currentTimeMillis();
-    List<CompletableFuture<List<User>>> suggestedUserListFuture = new ArrayList<CompletableFuture<List<User>>>();
 
     List<User> suggestedUserList = new ArrayList<>();
     if (!callMultipleRanker) {
-      try {
         suggestedUserList = _rankerClient.getRankerList(id, mergerResult.getData().getUsers(),
-                abTestMap.get(AbTestKeys.SUGGESTED_USER_MODEL.name()), 3).get();
-      } catch (InterruptedException e) {
-        e.printStackTrace();
-      } catch (ExecutionException e) {
-        e.printStackTrace();
-      }
+                abTestMap.get(AbTestKeys.SUGGESTED_USER_MODEL.name()), 3);
     } else {
+      List<CompletableFuture<List<User>>> suggestedUserListFuture = new ArrayList<CompletableFuture<List<User>>>();
       List<User> mergerUsers = mergerResult.getData().getUsers();
       int oneListSize = mergerUsers.size() / 5;
       for (int i = 0; i < 5; i ++) {
-        suggestedUserListFuture.add(i, _rankerClient.getRankerList(id, mergerUsers.subList(oneListSize * i, oneListSize * (i + 1)),
-                abTestMap.get(AbTestKeys.SUGGESTED_USER_MODEL.name()), i));
+        final int threadId = i;
+        suggestedUserListFuture.add(i, CompletableFuture.supplyAsync(() -> {return _rankerClient.getRankerList(id, mergerUsers.subList(oneListSize * threadId, oneListSize * (threadId + 1)),
+                abTestMap.get(AbTestKeys.SUGGESTED_USER_MODEL.name()), threadId);}));
       }
-      CompletableFuture.allOf(suggestedUserListFuture.get(0), suggestedUserListFuture.get(1), suggestedUserListFuture.get(2),
-              suggestedUserListFuture.get(3), suggestedUserListFuture.get(4)).join();
-      for (int i = 0; i < 5; i ++) {
-        try {
-          suggestedUserList = suggestedUserListFuture.get(i).get();
-          LOGGER.info("suggestedUserList of {} is {}", i, suggestedUserList);
-        } catch (InterruptedException e) {
-          e.printStackTrace();
-        } catch (ExecutionException e) {
-          e.printStackTrace();
-        }
-      }
+      suggestedUserList = Stream.of(suggestedUserListFuture.get(0), suggestedUserListFuture.get(1), suggestedUserListFuture.get(2),
+              suggestedUserListFuture.get(3), suggestedUserListFuture.get(4)).map(CompletableFuture::join).collect(Collectors.toList()).get(2);
+      LOGGER.info("suggestedUserList is {}", suggestedUserList);
+
     }
     mergerResult.getData().setUsers(suggestedUserList);
     long endTime = System.currentTimeMillis();

@@ -40,7 +40,7 @@ public class RankerClient {
   };
 
   @Async
-  public CompletableFuture<List<User>> getRankerList(Long id, List<User> inputUserList, String linearModelParameter, int rankerId) {
+  public List<User> getRankerList(Long id, List<User> inputUserList, String linearModelParameter, int rankerId) {
 
     // URI (URL) parameters
     Map<String, Object> uriParams = new HashMap<>();
@@ -80,6 +80,6 @@ public class RankerClient {
     for (Object userIdObject: userIdList) {
       outputUserList.add(userMap.get(Long.parseLong(userIdObject.toString())));
     }
-    return CompletableFuture.completedFuture(outputUserList);
+    return outputUserList;
   }
 }
