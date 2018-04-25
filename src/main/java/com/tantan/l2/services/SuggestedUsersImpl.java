@@ -9,6 +9,7 @@ import com.tantan.l2.models.Resp;
 import com.tantan.l2.models.User;
 import com.tantan.l2.models.UserInfoResponse;
 import com.tantan.l2.relevance.SuggestedUserRanker;
+import org.apache.avro.generic.GenericData;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +26,7 @@ import sun.rmi.runtime.Log;
 
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 
 @Service
 public class SuggestedUsersImpl implements SuggestedUsers {
@@ -65,13 +67,25 @@ public class SuggestedUsersImpl implements SuggestedUsers {
   public Resp getSuggestedUsers(Long id, Integer limit, String search, String filter, String with) {
     Resp mergerResult = _mergerClient.getUsers(id, limit, search, filter, with);
     Map<String, String> abTestMap = _abTestClient.getTreatments(id, AB_TEST_KEYS);
-    List<User> suggestedUserList = null;
+    CompletableFuture<List<User>>[] suggestedUserListFuture = null;
     if (!callMultipleRanker) {
       _rankerClient.getRankerList(id, mergerResult.getData().getUsers(), abTestMap.get(AbTestKeys.SUGGESTED_USER_MODEL.name()), 3);
     } else {
       List<User> mergerUsers = mergerResult.getData().getUsers();
       for (int i = 0; i < 5; i ++) {
-        suggestedUserList =  _rankerClient.getRankerList(id, mergerUsers.subList(2000 * i, 2000 * (i + 1)), abTestMap.get(AbTestKeys.SUGGESTED_USER_MODEL.name()), i);
+        suggestedUserListFuture[i] =  _rankerClient.getRankerList(id, mergerUsers.subList(2000 * i, 2000 * (i + 1)), abTestMap.get(AbTestKeys.SUGGESTED_USER_MODEL.name()), i);
+      }
+    }
+    CompletableFuture.allOf(suggestedUserListFuture).join();
+    List<User> suggestedUserList = new ArrayList<>();
+    for (int i = 0; i < 5; i ++) {
+      try {
+        suggestedUserList = suggestedUserListFuture[i].get();
+        LOGGER.info("suggestedUserList of {} is {}", i, suggestedUserList);
+      } catch (InterruptedException e) {
+        e.printStackTrace();
+      } catch (ExecutionException e) {
+        e.printStackTrace();
       }
     }
     mergerResult.getData().setUsers(suggestedUserList);
