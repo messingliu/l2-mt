@@ -65,7 +65,7 @@ public class SuggestedUsersImpl implements SuggestedUsers {
    */
   @Override
   public Resp getSuggestedUsers(Long id, Integer limit, String search, String filter, String with, boolean byPassThroughMode) {
-    return doGetSuggestUser(id, limit, search, filter, with, false);
+    return doGetSuggestUser(id, limit, search, filter, with, byPassThroughMode);
   }
 
   private Resp doGetSuggestUser(Long id, Integer limit, String search, String filter, String with, boolean byPassThroughMode) {
