@@ -9,6 +9,7 @@ public class LogConstants {
 
     public static final String CLIENT_CALL = "clientCall";
     public static final String RANKER = "Ranker";
+    public static final String RANKER_TOTAL = "Ranker_total";
     public static final String MERGER = "Merger";
 }
 

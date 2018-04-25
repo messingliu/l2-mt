@@ -67,20 +67,24 @@ public class SuggestedUsersImpl implements SuggestedUsers {
   public Resp getSuggestedUsers(Long id, Integer limit, String search, String filter, String with) {
     Resp mergerResult = _mergerClient.getUsers(id, limit, search, filter, with);
     Map<String, String> abTestMap = _abTestClient.getTreatments(id, AB_TEST_KEYS);
-    CompletableFuture<List<User>>[] suggestedUserListFuture = null;
+    long startTime = System.currentTimeMillis();
+    List<CompletableFuture<List<User>>> suggestedUserListFuture = new ArrayList<CompletableFuture<List<User>>>();
+
+    List<User> suggestedUserList = new ArrayList<>();
     if (!callMultipleRanker) {
       _rankerClient.getRankerList(id, mergerResult.getData().getUsers(), abTestMap.get(AbTestKeys.SUGGESTED_USER_MODEL.name()), 3);
     } else {
       List<User> mergerUsers = mergerResult.getData().getUsers();
       for (int i = 0; i < 5; i ++) {
-        suggestedUserListFuture[i] =  _rankerClient.getRankerList(id, mergerUsers.subList(2000 * i, 2000 * (i + 1)), abTestMap.get(AbTestKeys.SUGGESTED_USER_MODEL.name()), i);
+        suggestedUserListFuture.set(i, _rankerClient.getRankerList(id, mergerUsers.subList(2000 * i, 2000 * (i + 1)),
+                abTestMap.get(AbTestKeys.SUGGESTED_USER_MODEL.name()), i));
       }
     }
-    CompletableFuture.allOf(suggestedUserListFuture).join();
-    List<User> suggestedUserList = new ArrayList<>();
+    CompletableFuture.allOf(suggestedUserListFuture.get(0), suggestedUserListFuture.get(1), suggestedUserListFuture.get(2),
+            suggestedUserListFuture.get(3), suggestedUserListFuture.get(4)).join();
     for (int i = 0; i < 5; i ++) {
       try {
-        suggestedUserList = suggestedUserListFuture[i].get();
+        suggestedUserList = suggestedUserListFuture.get(i).get();
         LOGGER.info("suggestedUserList of {} is {}", i, suggestedUserList);
       } catch (InterruptedException e) {
         e.printStackTrace();
@@ -89,6 +93,10 @@ public class SuggestedUsersImpl implements SuggestedUsers {
       }
     }
     mergerResult.getData().setUsers(suggestedUserList);
+    long endTime = System.currentTimeMillis();
+    LOGGER.info("[{}: {}][{}: {}][{}: {}]", LogConstants.LOGO_TYPE, LogConstants.CLIENT_CALL,
+            LogConstants.CLIENT_NAME, LogConstants.RANKER_TOTAL, LogConstants.RESPONSE_TIME, endTime - startTime);
+
     return mergerResult;
     // sendKafkaTestKafkaEvent(mergerResult);
   }

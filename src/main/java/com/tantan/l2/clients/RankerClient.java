@@ -39,6 +39,7 @@ public class RankerClient {
           "http://10.189.100.41:8008/ranker"
   };
 
+  @Async
   public CompletableFuture<List<User>> getRankerList(Long id, List<User> inputUserList, String linearModelParameter, int rankerId) {
 
     // URI (URL) parameters
