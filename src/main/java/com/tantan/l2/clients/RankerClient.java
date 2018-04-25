@@ -75,7 +75,6 @@ public class RankerClient {
     long endTime = System.currentTimeMillis();
     LOGGER.info("[{}: {}][{}: {}][{}: {}]", LogConstants.LOGO_TYPE, LogConstants.CLIENT_CALL,
             LogConstants.CLIENT_NAME, LogConstants.RANKER, LogConstants.RESPONSE_TIME, endTime - startTime);
-    LOGGER.info("userIdList data is :  " + userIdList);
     List<User> outputUserList = new ArrayList<>();
     for (Object userIdObject: userIdList) {
       outputUserList.add(userMap.get(Long.parseLong(userIdObject.toString())));

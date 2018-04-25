@@ -56,7 +56,6 @@ public class MergerClient {
       e.printStackTrace();
     }
 
-    LOGGER.info("usersFromMerger data is :  " + usersFromMerger.toString());
     long endTime = System.currentTimeMillis();
     LOGGER.info("[{}: {}][{}: {}][{}: {}]", LogConstants.LOGO_TYPE, LogConstants.CLIENT_CALL,
             LogConstants.CLIENT_NAME, LogConstants.MERGER, LogConstants.RESPONSE_TIME, endTime - startTime,
