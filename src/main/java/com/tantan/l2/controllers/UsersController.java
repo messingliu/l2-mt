@@ -30,4 +30,15 @@ public class UsersController {
     //SuggestedUsers suggestedUsers = new SuggestedUsersImpl();
     return suggestedUsers.getSuggestedUsers(userId, limit, search, filter, with);
   }
+
+  @RequestMapping("/users2")
+  public Resp suggestedUsers2(@RequestParam(value="user_id") Long userId,
+                             @RequestParam(value="limit", defaultValue = "25") Integer limit,
+                             @RequestParam(value="search") String search,
+                             @RequestParam(value="filter", defaultValue = "") String filter,
+                             @RequestParam(value="with") String with) {
+
+    return suggestedUsers.getSuggestedUsersV2(userId, limit, search, filter, with);
+  }
+
 }

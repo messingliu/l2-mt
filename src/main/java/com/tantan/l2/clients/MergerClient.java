@@ -1,12 +1,10 @@
 package com.tantan.l2.clients;
 
+import avro.shaded.com.google.common.collect.Lists;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tantan.l2.constants.LogConstants;
-import com.tantan.l2.models.Resp;
-import com.tantan.l2.models.User;
-import com.tantan.l2.models.UserList;
-import com.tantan.l2.models.Meta;
-import com.tantan.l2.models.Extra;
+import com.tantan.l2.models.*;
 import com.tantan.l2.utils.JacksonConverter;
 
 import org.slf4j.Logger;
@@ -41,7 +39,7 @@ public class MergerClient {
       url = url_link + id + "&limit=" + limit;
     } else {
       url = "http://10.189.100.43:8010/mockMerger?search=suggested,scenario-suggested&filter=&with=contacts," +
-              "questions,scenarios,user.publicMoments,relationships&user_id=" + id + "&limit=" + limit;
+          "questions,scenarios,user.publicMoments,relationships" + "&user_id=" + id + "&limit=" + limit;
     }
     //Get from merger
     RestTemplate restTemplate = new RestTemplate();
@@ -58,9 +56,43 @@ public class MergerClient {
 
     LOGGER.info("usersFromMerger data is :  " + usersFromMerger.toString());
     long endTime = System.currentTimeMillis();
-    LOGGER.info("[{}: {}][{}: {}][{}: {}]", LogConstants.LOGO_TYPE, LogConstants.CLIENT_CALL,
+    LOGGER.info("[{}: {}][{}: {}][{}: {}][{} : {}]", LogConstants.LOGO_TYPE, LogConstants.CLIENT_CALL,
             LogConstants.CLIENT_NAME, LogConstants.MERGER, LogConstants.RESPONSE_TIME, endTime - startTime,
             LogConstants.DATA_SIZE, resp.getData().getUsers().size());
     return resp;
   }
+
+
+  public Resp getUsersV2(Long id, int limit, String search, String filter, String with) {
+    Resp resp = new Resp();
+    long startTime = System.currentTimeMillis();
+    try {
+      String url = "http://10.189.100.43:8010/mockMerger2?search=suggested,scenario-suggested&filter=&with=contacts," +
+          "questions,scenarios,user.publicMoments,relationships" + "&user_id=" + id + "&limit=" + limit;
+      //Get from merger
+      RestTemplate restTemplate = new RestTemplate();
+      restTemplate.getMessageConverters().add(new JacksonConverter());
+      //convert json to java object
+      ObjectMapper mapper = new ObjectMapper();
+      String usersFromMerger = restTemplate.getForObject(url, String.class);
+      List<L1User> l1users = mapper.readValue(usersFromMerger, new TypeReference<List<L1User>>() {
+      });
+      List<User> users = Lists.newArrayList();
+      for (L1User l1user : l1users) {
+        User user = new User();
+        user.setId(l1user.getId());
+        users.add(user);
+      }
+      resp.setData(new UserList(users));
+    } catch (Exception e) {
+      LOGGER.error("Merger client getUsersV2 fail", e);
+    } finally {
+      LOGGER.info("[{}: {}][{}: {}][{}: {}]", LogConstants.LOGO_TYPE, LogConstants.CLIENT_CALL,
+          LogConstants.CLIENT_NAME, "Merger-getUsersV2", LogConstants.RESPONSE_TIME, System.currentTimeMillis() - startTime);
+    }
+
+    return resp;
+  }
+
+
 }

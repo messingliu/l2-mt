@@ -63,7 +63,21 @@ public class SuggestedUsersImpl implements SuggestedUsers {
    */
   @Override
   public Resp getSuggestedUsers(Long id, Integer limit, String search, String filter, String with) {
-    Resp mergerResult = _mergerClient.getUsers(id, limit, search, filter, with);
+    return doGetSuggestUser(id, limit, search, filter, with, false);
+  }
+
+  @Override
+  public Resp getSuggestedUsersV2(Long id, Integer limit, String search, String filter, String with) {
+    return doGetSuggestUser(id, limit, search, filter, with, true);
+  }
+
+  private Resp doGetSuggestUser(Long id, Integer limit, String search, String filter, String with, boolean mergerV2) {
+    Resp mergerResult;
+    if (mergerV2) {
+      mergerResult = _mergerClient.getUsersV2(id, limit, search, filter, with);
+    } else {
+      mergerResult = _mergerClient.getUsers(id, limit, search, filter, with);
+    }
     Map<String, String> abTestMap = _abTestClient.getTreatments(id, AB_TEST_KEYS);
     List<User> suggestedUserList = null;
     if (!callMultipleRanker) {
@@ -75,8 +89,8 @@ public class SuggestedUsersImpl implements SuggestedUsers {
       }
     }
     mergerResult.getData().setUsers(suggestedUserList);
+
     return mergerResult;
-    // sendKafkaTestKafkaEvent(mergerResult);
   }
 
   public void sendKafkaTestKafkaEvent(Resp mergerResult) {

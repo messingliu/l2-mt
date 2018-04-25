@@ -62,8 +62,8 @@ public class UserControllerTests {
   @Before
   public void setUp() {
     _userResp = new UserRespBuilder().buildUserResp();
-    Mockito.when(_suggestedUsers.getSuggestedUsers(any(), any(), any(), any(), any()))
-        .thenReturn(CompletableFuture.completedFuture(_userResp));
+    //Mockito.when(_suggestedUsers.getSuggestedUsers(any(), any(), any(), any(), any()))
+    //    .thenReturn(CompletableFuture.completedFuture(_userResp));
   }
 
   @Test
