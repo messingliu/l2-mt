@@ -10,7 +10,5 @@ public interface SuggestedUsers {
    * @param id - user id
    * @return
    */
-  public Resp getSuggestedUsers(Long id, Integer limit, String search, String filter, String with);
-
-  public Resp getSuggestedUsersV2(Long id, Integer limit, String search, String filter, String with);
+  public Resp getSuggestedUsers(Long id, Integer limit, String search, String filter, String with, boolean byPassThroughMode);
 }

@@ -25,20 +25,10 @@ public class UsersController {
                        @RequestParam(value="limit", defaultValue = "25") Integer limit,
                        @RequestParam(value="search") String search,
                        @RequestParam(value="filter", defaultValue = "") String filter,
-                       @RequestParam(value="with") String with) throws ExecutionException, InterruptedException {
+                       @RequestParam(value="with") String with,
+                       @RequestParam(value="byPassThroughMode", defaultValue = "true") boolean byPassThroughMode) throws ExecutionException, InterruptedException {
     //User user = new User(counter.incrementAndGet(), 1, 2, 3, "here", "type");
     //SuggestedUsers suggestedUsers = new SuggestedUsersImpl();
-    return suggestedUsers.getSuggestedUsers(userId, limit, search, filter, with);
+    return suggestedUsers.getSuggestedUsers(userId, limit, search, filter, with, byPassThroughMode);
   }
-
-  @RequestMapping("/users2")
-  public Resp suggestedUsers2(@RequestParam(value="user_id") Long userId,
-                             @RequestParam(value="limit", defaultValue = "25") Integer limit,
-                             @RequestParam(value="search") String search,
-                             @RequestParam(value="filter", defaultValue = "") String filter,
-                             @RequestParam(value="with") String with) {
-
-    return suggestedUsers.getSuggestedUsersV2(userId, limit, search, filter, with);
-  }
-
 }
