@@ -91,8 +91,9 @@ public class SuggestedUsersImpl implements SuggestedUsers {
       }
     } else {
       List<User> mergerUsers = mergerResult.getData().getUsers();
+      int oneListSize = mergerUsers.size() / 5;
       for (int i = 0; i < 5; i ++) {
-        suggestedUserListFuture.set(i, _rankerClient.getRankerList(id, mergerUsers.subList(2000 * i, 2000 * (i + 1)),
+        suggestedUserListFuture.add(i, _rankerClient.getRankerList(id, mergerUsers.subList(oneListSize * i, oneListSize * (i + 1)),
                 abTestMap.get(AbTestKeys.SUGGESTED_USER_MODEL.name()), i));
       }
       CompletableFuture.allOf(suggestedUserListFuture.get(0), suggestedUserListFuture.get(1), suggestedUserListFuture.get(2),
