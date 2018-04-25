@@ -34,12 +34,12 @@ public class RankerClient {
   private final static String[] url_link = {
           "http://10.189.100.34:8008/ranker",
           "http://10.189.100.35:8008/ranker",
-          "http://10.189.100.37:8008/ranker",
+          "http://10.189.100.36:8008/ranker",
           "http://10.189.100.40:8008/ranker",
           "http://10.189.100.41:8008/ranker"
   };
 
-  public List<User> getRankerList(Long id, List<User> inputUserList, String linearModelParameter, int rankerId) {
+  public CompletableFuture<List<User>> getRankerList(Long id, List<User> inputUserList, String linearModelParameter, int rankerId) {
 
     // URI (URL) parameters
     Map<String, Object> uriParams = new HashMap<>();
@@ -75,11 +75,10 @@ public class RankerClient {
     long endTime = System.currentTimeMillis();
     LOGGER.info("[{}: {}][{}: {}][{}: {}]", LogConstants.LOGO_TYPE, LogConstants.CLIENT_CALL,
             LogConstants.CLIENT_NAME, LogConstants.RANKER, LogConstants.RESPONSE_TIME, endTime - startTime);
-    LOGGER.info("userIdList data is :  " + userIdList);
     List<User> outputUserList = new ArrayList<>();
     for (Object userIdObject: userIdList) {
       outputUserList.add(userMap.get(Long.parseLong(userIdObject.toString())));
     }
-    return outputUserList;
+    return CompletableFuture.completedFuture(outputUserList);
   }
 }
