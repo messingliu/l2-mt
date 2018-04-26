@@ -97,8 +97,18 @@ public class SuggestedUsersImpl implements SuggestedUsers {
         suggestedUserListFuture.add(i, CompletableFuture.supplyAsync(() -> {return _rankerClient.getRankerList(id, mergerUsers.subList(oneListSize * threadId, oneListSize * (threadId + 1)),
                 abTestMap.get(AbTestKeys.SUGGESTED_USER_MODEL.name()), threadId);}, exs));
       }
-      suggestedUserList = Stream.of(suggestedUserListFuture.get(0), suggestedUserListFuture.get(1), suggestedUserListFuture.get(2),
-              suggestedUserListFuture.get(3), suggestedUserListFuture.get(4)).map(CompletableFuture::join).collect(Collectors.toList()).get(2);
+      List<List<User>> userTotalList = Stream.of(suggestedUserListFuture.get(0), suggestedUserListFuture.get(1), suggestedUserListFuture.get(2),
+              suggestedUserListFuture.get(3), suggestedUserListFuture.get(4)).map(CompletableFuture::join).collect(Collectors.toList());
+      int total = 0;
+      for (List<User> userList : userTotalList) {
+        if (userList != null) {
+          total += userList.size();
+        }
+      }
+      LOGGER.info("[{}: {}][{}: {}][{}: {}]", LogConstants.LOGO_TYPE, LogConstants.CLIENT_CALL,
+          LogConstants.CLIENT_NAME, LogConstants.RANKER_SIZE, LogConstants.DATA_SIZE, total);
+
+      suggestedUserList = userTotalList.get(2);
     }
     mergerResult.getData().setUsers(suggestedUserList);
     exs.shutdown();
