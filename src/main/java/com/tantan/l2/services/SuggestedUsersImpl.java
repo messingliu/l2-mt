@@ -55,7 +55,7 @@ public class SuggestedUsersImpl implements SuggestedUsers {
   private AbTestClient _abTestClient;
 
   private static final Set<String> AB_TEST_KEYS = new HashSet<>();
-  private static final boolean callMultipleRanker = true;
+  private static final boolean callMultipleRanker = false;
 
   static {
     AB_TEST_KEYS.add(AbTestKeys.SUGGESTED_USER_MODEL.name());

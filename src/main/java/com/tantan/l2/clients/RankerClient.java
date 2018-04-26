@@ -56,7 +56,8 @@ public class RankerClient {
                                        .queryParam("candidateIds", listOfIds)
                                        .queryParam("id", id)
                                        .queryParam("modelId", 0)
-                                       .queryParam("linearModelParameter", linearModelParameter);
+                                       .queryParam("linearModelParameter", linearModelParameter)
+                                       .queryParam("topK", 100);
 
 
     //Get from ranker
@@ -74,13 +75,14 @@ public class RankerClient {
     restTemplate.getMessageConverters().add(new JacksonConverter());
     //convert json to java object
     ObjectMapper mapper = new ObjectMapper();
-    String usersFromMerger = restTemplate.getForObject(url, String.class);
+    String usersFromRanker = restTemplate.getForObject(url, String.class);
     UserFeaturesList resp = null;
     try {
-      resp = mapper.readValue(usersFromMerger, UserFeaturesList.class);
+      resp = mapper.readValue(usersFromRanker, UserFeaturesList.class);
     } catch (Exception e) {
       e.printStackTrace();
     }
+    LOGGER.info("Response is " + resp);
     List<User> outputUserList = new ArrayList<>();
     for (UserFeatures userIdObject: resp.getUserFeaturesList()) {
       outputUserList.add(userMap.get(userIdObject.getId()));

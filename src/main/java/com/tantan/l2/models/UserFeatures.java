@@ -1,13 +1,16 @@
 package com.tantan.l2.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.List;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class UserFeatures {
 
+  @JsonProperty("id")
   private Long id;
+  @JsonProperty("features")
   private List<Float> features;
 
   public UserFeatures() {
