@@ -1,5 +1,6 @@
 package com.tantan.l2.clients;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tantan.l2.constants.LogConstants;
 import com.tantan.l2.models.*;
@@ -76,15 +77,15 @@ public class RankerClient {
     //convert json to java object
     ObjectMapper mapper = new ObjectMapper();
     String usersFromRanker = restTemplate.getForObject(url, String.class);
-    UserFeaturesList resp = null;
+    List<UserFeatures> rankerFeatures = null;
     try {
-      resp = mapper.readValue(usersFromRanker, UserFeaturesList.class);
-    } catch (Exception e) {
+      rankerFeatures = mapper.readValue(usersFromRanker, new TypeReference<List<UserFeatures>>() {});
+    }catch (Exception e) {
       e.printStackTrace();
     }
-    LOGGER.info("Response is " + resp);
+    LOGGER.info("Response is " + rankerFeatures);
     List<User> outputUserList = new ArrayList<>();
-    for (UserFeatures userIdObject: resp.getUserFeaturesList()) {
+    for (UserFeatures userIdObject: rankerFeatures) {
       outputUserList.add(userMap.get(userIdObject.getId()));
     }
     long endTime = System.currentTimeMillis();
