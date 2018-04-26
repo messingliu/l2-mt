@@ -81,7 +81,7 @@ public class SuggestedUsersImpl implements SuggestedUsers {
     }
     Map<String, String> abTestMap = _abTestClient.getTreatments(id, AB_TEST_KEYS);
     long startTime = System.currentTimeMillis();
-    ExecutorService exs = Executors.newFixedThreadPool(10);
+    ExecutorService exs = Executors.newFixedThreadPool(15);
     List<User> suggestedUserList = new ArrayList<>();
     if (!callMultipleRanker) {
       List<User> mergerUsers = mergerResult.getData().getUsers();
@@ -92,13 +92,14 @@ public class SuggestedUsersImpl implements SuggestedUsers {
       List<CompletableFuture<List<User>>> suggestedUserListFuture = new ArrayList<CompletableFuture<List<User>>>();
       List<User> mergerUsers = mergerResult.getData().getUsers();
       int oneListSize = Math.min(2000, mergerUsers.size() / 5);
-      for (int i = 0; i < 5; i ++) {
+      for (int i = 0; i < 10; i ++) {
         final int threadId = i;
-        suggestedUserListFuture.add(i, CompletableFuture.supplyAsync(() -> {return _rankerClient.getRankerList(id, mergerUsers.subList(oneListSize * threadId, oneListSize * (threadId + 1)),
+        suggestedUserListFuture.add(i, CompletableFuture.supplyAsync(() -> {return _rankerClient.getRankerList(id, mergerUsers.subList(0, oneListSize),
                 abTestMap.get(AbTestKeys.SUGGESTED_USER_MODEL.name()), threadId);}, exs));
       }
       suggestedUserList = Stream.of(suggestedUserListFuture.get(0), suggestedUserListFuture.get(1), suggestedUserListFuture.get(2),
-              suggestedUserListFuture.get(3), suggestedUserListFuture.get(4)).map(CompletableFuture::join).collect(Collectors.toList()).get(2);
+              suggestedUserListFuture.get(3), suggestedUserListFuture.get(4),suggestedUserListFuture.get(5), suggestedUserListFuture.get(6), suggestedUserListFuture.get(7),
+              suggestedUserListFuture.get(8), suggestedUserListFuture.get(9)).map(CompletableFuture::join).collect(Collectors.toList()).get(2);
     }
     mergerResult.getData().setUsers(suggestedUserList);
     exs.shutdown();
