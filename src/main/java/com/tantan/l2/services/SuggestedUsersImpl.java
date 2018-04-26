@@ -98,7 +98,8 @@ public class SuggestedUsersImpl implements SuggestedUsers {
                 abTestMap.get(AbTestKeys.SUGGESTED_USER_MODEL.name()), threadId);}, exs));
       }
       List<List<User>> userTotalList = Stream.of(suggestedUserListFuture.get(0), suggestedUserListFuture.get(1), suggestedUserListFuture.get(2),
-              suggestedUserListFuture.get(3), suggestedUserListFuture.get(4)).map(CompletableFuture::join).collect(Collectors.toList());
+              suggestedUserListFuture.get(3), suggestedUserListFuture.get(4),suggestedUserListFuture.get(5), suggestedUserListFuture.get(6), suggestedUserListFuture.get(7),
+              suggestedUserListFuture.get(8), suggestedUserListFuture.get(9)).map(CompletableFuture::join).collect(Collectors.toList());
       int total = 0;
       for (List<User> userList : userTotalList) {
         if (userList != null) {
