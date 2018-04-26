@@ -83,7 +83,6 @@ public class RankerClient {
     }catch (Exception e) {
       e.printStackTrace();
     }
-    LOGGER.info("Response is " + rankerFeatures);
     List<User> outputUserList = new ArrayList<>();
     for (UserFeatures userIdObject: rankerFeatures) {
       outputUserList.add(userMap.get(userIdObject.getId()));
