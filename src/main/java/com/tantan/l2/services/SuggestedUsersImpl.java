@@ -55,7 +55,7 @@ public class SuggestedUsersImpl implements SuggestedUsers {
   private AbTestClient _abTestClient;
 
   private static final Set<String> AB_TEST_KEYS = new HashSet<>();
-  private static final boolean callMultipleRanker = false;
+  private static final boolean callMultipleRanker = true;
 
   static {
     AB_TEST_KEYS.add(AbTestKeys.SUGGESTED_USER_MODEL.name());
@@ -101,6 +101,7 @@ public class SuggestedUsersImpl implements SuggestedUsers {
               suggestedUserListFuture.get(3), suggestedUserListFuture.get(4)).map(CompletableFuture::join).collect(Collectors.toList()).get(2);
     }
     mergerResult.getData().setUsers(suggestedUserList);
+    exs.shutdown();
     long endTime = System.currentTimeMillis();
     LOGGER.info("[{}: {}][{}: {}][{}: {}]", LogConstants.LOGO_TYPE, LogConstants.CLIENT_CALL,
             LogConstants.CLIENT_NAME, LogConstants.RANKER_TOTAL, LogConstants.RESPONSE_TIME, endTime - startTime);
