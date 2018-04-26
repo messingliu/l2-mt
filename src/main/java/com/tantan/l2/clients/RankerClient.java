@@ -67,18 +67,27 @@ public class RankerClient {
       LOGGER.error("Error in building url for ranking id " + id, e);
       e.printStackTrace();
     }
-    //convert json to java object
+
+    long startTime = System.currentTimeMillis();
+    //Get from merger
     RestTemplate restTemplate = new RestTemplate();
     restTemplate.getMessageConverters().add(new JacksonConverter());
-    long startTime = System.currentTimeMillis();
-    List<Object> userIdList = restTemplate.getForObject(url, List.class);
+    //convert json to java object
+    ObjectMapper mapper = new ObjectMapper();
+    String usersFromMerger = restTemplate.getForObject(url, String.class);
+    UserFeaturesList resp = null;
+    try {
+      resp = mapper.readValue(usersFromMerger, UserFeaturesList.class);
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+    List<User> outputUserList = new ArrayList<>();
+    for (UserFeatures userIdObject: resp.getUserFeaturesList()) {
+      outputUserList.add(userMap.get(userIdObject.getId()));
+    }
     long endTime = System.currentTimeMillis();
     LOGGER.info("[{}: {}][{}: {}][{}: {}]", LogConstants.LOGO_TYPE, LogConstants.CLIENT_CALL,
             LogConstants.CLIENT_NAME, LogConstants.RANKER, LogConstants.RESPONSE_TIME, endTime - startTime);
-    List<User> outputUserList = new ArrayList<>();
-    for (Object userIdObject: userIdList) {
-      outputUserList.add(userMap.get(Long.parseLong(userIdObject.toString())));
-    }
     return outputUserList;
   }
 }
