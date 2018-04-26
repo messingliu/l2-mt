@@ -91,7 +91,7 @@ public class SuggestedUsersImpl implements SuggestedUsers {
     } else {
       List<CompletableFuture<List<User>>> suggestedUserListFuture = new ArrayList<CompletableFuture<List<User>>>();
       List<User> mergerUsers = mergerResult.getData().getUsers();
-      int oneListSize = Math.min(2000, mergerUsers.size() / 5);
+      int oneListSize = Math.min(2000, mergerUsers.size());
       for (int i = 0; i < 10; i ++) {
         final int threadId = i;
         suggestedUserListFuture.add(i, CompletableFuture.supplyAsync(() -> {return _rankerClient.getRankerList(id, mergerUsers.subList(0, oneListSize),
