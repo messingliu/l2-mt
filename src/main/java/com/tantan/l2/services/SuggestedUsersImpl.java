@@ -9,6 +9,9 @@ import com.tantan.l2.models.Resp;
 import com.tantan.l2.models.User;
 import com.tantan.l2.models.UserInfoResponse;
 import com.tantan.l2.relevance.SuggestedUserRanker;
+import io.micrometer.core.annotation.Timed;
+import io.micrometer.core.instrument.Counter;
+import io.micrometer.core.instrument.Metrics;
 import org.apache.avro.generic.GenericData;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -73,12 +76,13 @@ public class SuggestedUsersImpl implements SuggestedUsers {
   }
 
   private Resp doGetSuggestUser(Long id, Integer limit, String search, String filter, String with, boolean byPassThroughMode) {
-    Resp mergerResult;
-    if (byPassThroughMode) {
-      mergerResult = _mergerClient.getUsers(id, limit, search, filter, with);
-    } else {
-      mergerResult = _mergerClient.getUsersV2(id, limit, search, filter, with);
-    }
+    Resp mergerResult = Metrics.timer("client.latency", "endpoint", "merger").record(() -> {
+              if (byPassThroughMode) {
+                return _mergerClient.getUsers(id, limit, search, filter, with);
+              } else {
+                return _mergerClient.getUsersV2(id, limit, search, filter, with);
+              }
+            });
     Map<String, String> abTestMap = _abTestClient.getTreatments(id, AB_TEST_KEYS);
     long startTime = System.currentTimeMillis();
     ExecutorService exs = Executors.newFixedThreadPool(15);

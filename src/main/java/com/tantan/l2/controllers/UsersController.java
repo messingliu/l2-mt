@@ -3,6 +3,8 @@ package com.tantan.l2.controllers;
 import com.tantan.l2.models.Resp;
 import com.tantan.l2.models.UserInfoResponse;
 import com.tantan.l2.services.SuggestedUsers;
+import io.micrometer.core.instrument.Counter;
+import io.micrometer.core.instrument.Metrics;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,8 +29,8 @@ public class UsersController {
                        @RequestParam(value="filter", defaultValue = "") String filter,
                        @RequestParam(value="with") String with,
                        @RequestParam(value="byPassThroughMode", defaultValue = "true") boolean byPassThroughMode) throws ExecutionException, InterruptedException {
-    //User user = new User(counter.incrementAndGet(), 1, 2, 3, "here", "type");
-    //SuggestedUsers suggestedUsers = new SuggestedUsersImpl();
+    Counter counter = Metrics.counter("received.request", "endpoint", "users");
+    counter.increment();
     return suggestedUsers.getSuggestedUsers(userId, limit, search, filter, with, byPassThroughMode);
   }
 }
