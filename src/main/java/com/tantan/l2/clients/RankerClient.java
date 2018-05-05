@@ -38,11 +38,11 @@ public class RankerClient {
           "http://10.189.100.36:8008/ranker",
           "http://10.189.100.40:8008/ranker",
           "http://10.189.100.41:8008/ranker",
-          "http://10.189.100.34:8012/ranker",
-          "http://10.189.100.35:8012/ranker",
-          "http://10.189.100.36:8012/ranker",
-          "http://10.189.100.40:8012/ranker",
-          "http://10.189.100.41:8012/ranker"
+          "http://10.189.100.34:8007/ranker",
+          "http://10.189.100.35:8007/ranker",
+          "http://10.189.100.36:8007/ranker",
+          "http://10.189.100.40:8007/ranker",
+          "http://10.189.100.41:8007/ranker"
   };
 
   @Async
