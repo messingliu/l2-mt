@@ -2,6 +2,7 @@ package com.tantan.l2.clients;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.tantan.l2.constants.AbTestKeys;
 import com.tantan.l2.constants.LogConstants;
 import com.tantan.l2.models.*;
 import com.tantan.l2.utils.JacksonConverter;
@@ -23,7 +24,7 @@ import java.util.stream.Collectors;
 @Component
 public class RankerClient {
   private final Logger LOGGER = LoggerFactory.getLogger(this.getClass());
-
+  private final boolean callRPC = false;
   /**
    * This method will get a user from id
    *
@@ -45,9 +46,37 @@ public class RankerClient {
           "http://10.189.100.41:8007/ranker"
   };
 
+  private final static String[] rpc_url_link = {
+          "http://10.189.100.34",
+          "http://10.189.100.35",
+          "http://10.189.100.36",
+          "http://10.189.100.40",
+          "http://10.189.100.41",
+          "http://10.189.100.34",
+          "http://10.189.100.35",
+          "http://10.189.100.36",
+          "http://10.189.100.40",
+          "http://10.189.100.41"
+  };
+  private final static int[] rpc_url_port = {
+          6565,
+          6565,
+          6565,
+          6565,
+          6565,
+          6566,
+          6566,
+          6566,
+          6566,
+          6566
+  };
+
+
   @Async
   public List<User> getRankerList(Long id, List<User> inputUserList, String linearModelParameter, int rankerId) {
-
+    if (callRPC) {
+      return getRankerListRpc(id, inputUserList, linearModelParameter, rankerId);
+    }
     // URI (URL) parameters
     Map<String, Object> uriParams = new HashMap<>();
     List<Long> candidateIds = new ArrayList<>();
@@ -86,8 +115,35 @@ public class RankerClient {
     try {
       rankerFeatures = mapper.readValue(usersFromRanker, new TypeReference<List<UserFeatures>>() {});
     }catch (Exception e) {
-      e.printStackTrace();
+      LOGGER.error("Error in getting features from ranker: " + url, e);
     }
+    List<User> outputUserList = new ArrayList<>();
+    for (UserFeatures userIdObject: rankerFeatures) {
+      outputUserList.add(userMap.get(userIdObject.getId()));
+    }
+    long endTime = System.currentTimeMillis();
+    LOGGER.info("[{}: {}][{}: {}][{}: {}]", LogConstants.LOGO_TYPE, LogConstants.CLIENT_CALL,
+            LogConstants.CLIENT_NAME, LogConstants.RANKER, LogConstants.RESPONSE_TIME, endTime - startTime);
+    return outputUserList;
+  }
+
+  public List<User> getRankerListRpc(Long id, List<User> inputUserList, String linearModelParameter, int rankerId) {
+    List<Long> candidateIds = new ArrayList<>();
+    Map<Long, User> userMap = new HashMap<>();
+    for (User user : inputUserList) {
+      candidateIds.add(user.getId());
+      userMap.put(user.getId(), user);
+    }
+    long startTime = System.currentTimeMillis();
+
+    RankerRpcClient rankerRpcClient = new RankerRpcClient(rpc_url_link[rankerId], rpc_url_port[rankerId]);
+    List<UserFeatures> rankerFeatures = null;
+    try {
+      rankerFeatures = rankerRpcClient.getRankerList(id, candidateIds, linearModelParameter, rankerId);
+    }catch (Exception e) {
+      LOGGER.error("Error in getting features from ranker: ", e);
+    }
+
     List<User> outputUserList = new ArrayList<>();
     for (UserFeatures userIdObject: rankerFeatures) {
       outputUserList.add(userMap.get(userIdObject.getId()));

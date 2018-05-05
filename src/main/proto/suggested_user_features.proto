@@ -1,0 +1,35 @@
+syntax = "proto3";
+
+option java_multiple_files = true;
+option java_package = "com.tantan.ranker.suggestedusersfeatures";
+option java_outer_classname = "SuggestedUserFeaturesProto";
+option objc_class_prefix = "RTG";
+
+package suggestedusersfeatures;
+
+// The suggested user features servie definiton.
+service SuggestedUserFeatures {
+  // get the suggested users features
+  rpc GetSuggestedUserFeatures (UserRequest) returns (UserFeaturesResponse) {}
+}
+
+// The request message containing the user's info.
+message UserRequest {
+  int64 id = 1;
+
+  repeated int64 candidateIds = 2;
+  int32 modelId = 3;
+  string linearModelParameter = 4;
+  int32 topK = 5;
+}
+
+// The response message containing the features
+message UserFeaturesResponse {
+   repeated FeatureInfo featureInfo = 1;
+}
+
+message FeatureInfo {
+ int64 id = 1;
+ float score = 2;
+ repeated float featureData = 3;
+}
