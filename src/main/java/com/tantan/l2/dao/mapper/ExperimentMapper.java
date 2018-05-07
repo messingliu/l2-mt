@@ -1,5 +1,6 @@
 package com.tantan.l2.dao.mapper;
 
+import com.alibaba.fastjson.JSON;
 import com.tantan.l2.dao.hbase.RowMapper;
 import com.tantan.l2.models.abtest.Experiment;
 import org.apache.hadoop.hbase.client.Result;
@@ -14,7 +15,6 @@ public class ExperimentMapper implements RowMapper<Experiment> {
   @Override
   public Experiment mapRow(Result result, int rowNum) throws Exception {
     String content = Bytes.toString(result.getValue(CF, CONTENT));
-
-    return null;
+    return JSON.parseObject(content, Experiment.class);
   }
 }
