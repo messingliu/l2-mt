@@ -24,7 +24,7 @@ import java.util.stream.Collectors;
 @Component
 public class RankerClient {
   private final Logger LOGGER = LoggerFactory.getLogger(this.getClass());
-  private final boolean callRPC = false;
+  private final boolean callRPC = true;
   /**
    * This method will get a user from id
    *

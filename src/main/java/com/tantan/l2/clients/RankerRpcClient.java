@@ -45,11 +45,15 @@ public class RankerRpcClient {
 
 
     public List<UserFeatures> getRankerList(Long id, List<Long> candidateIds, String linearModelParameter, int rankerId) {
+        List<FeatureInfo> candidateFeatureList = candidateIds.stream()
+                .map(featureInfoId -> FeatureInfo.newBuilder().setId(featureInfoId).build())
+                .collect(Collectors.toList());
+
         UserRequest request = UserRequest.newBuilder()
-                .setId(id)
-                .addAllCandidateIds(() -> candidateIds.iterator())
-                .setModelId(0)
-                .setLinearModelParameter(linearModelParameter)
+                .setActorId(id)
+                .addAllCandidateFeature(() -> candidateFeatureList.iterator())
+                .setModelId("0")
+                .setLixConfig(linearModelParameter)
                 .setTopK(100)
                 .build();
         UserFeaturesResponse feature;
@@ -60,10 +64,9 @@ public class RankerRpcClient {
             return null;
         }
         List<UserFeatures> userFeaturesList = new ArrayList<>();
-        for (int i = 0; i < feature.getFeatureInfoCount(); i ++) {
+        for (int i = 0; i < feature.getReceiverFeatureCount(); i ++) {
             UserFeatures oneUser = new UserFeatures();
-            oneUser.setId(feature.getFeatureInfo(i).getId());
-            oneUser.setFeatures(feature.getFeatureInfo(i).getFeatureDataList());
+            oneUser.setId(feature.getReceiverFeature(i).getId());
         }
         return userFeaturesList;
     }

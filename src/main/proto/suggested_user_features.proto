@@ -15,21 +15,30 @@ service SuggestedUserFeatures {
 
 // The request message containing the user's info.
 message UserRequest {
-  int64 id = 1;
-
-  repeated int64 candidateIds = 2;
-  int32 modelId = 3;
-  string linearModelParameter = 4;
-  int32 topK = 5;
+  string modelId = 1;
+  int64 actorId = 2;
+  int64 requestId = 3;
+  int32 topK = 4;
+  string lixConfig = 5;
+  map<string, string> requestParameter = 6;
+  repeated FeatureInfo candidateFeature = 7; // contains candidate user id and features from merger and other optional features
+  FeatureInfo actorFeature = 8; //optional
 }
 
 // The response message containing the features
 message UserFeaturesResponse {
-   repeated FeatureInfo featureInfo = 1;
+  string modelId = 1; //optional
+  int64 requestId = 2;
+  repeated FeatureInfo receiverFeature = 3;
+  int64 actorId = 4;
+  FeatureInfo actorFeature = 5; //optional
 }
 
 message FeatureInfo {
  int64 id = 1;
- float score = 2;
- repeated float featureData = 3;
+ float score = 2; //optional
+ map<string, int64> featureLong = 3;
+ map<string, bool> featureBool = 4;
+ map<string, float> featureFloat = 5;
+ map<string, string> featureString = 6;
 }
