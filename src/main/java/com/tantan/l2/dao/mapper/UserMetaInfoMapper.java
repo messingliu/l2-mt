@@ -9,7 +9,7 @@ import org.apache.hadoop.hbase.util.Bytes;
 public class UserMetaInfoMapper implements RowMapper<UserMetaInfo> {
     public static final String TABLE_NAME = "hbase_user_weekly_member_metadata";
     public static final String FAMILY_NAME = "f";
-    private static final String ROW_KEY_PREFIX = "user_id_";
+    private static final String ROW_KEY_PREFIX = "uid_";
     private static final byte[] CF = FAMILY_NAME.getBytes();
     private static final byte[] AGE = "age".getBytes();
     private static final byte[] GENDER = "gender".getBytes();
