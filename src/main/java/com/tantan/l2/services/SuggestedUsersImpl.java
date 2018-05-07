@@ -25,7 +25,6 @@ import com.tantan.avro.AvroExtraTest;
 import com.tantan.avro.AvroMetaTest;
 import com.tantan.avro.AvroUsersTest;
 import com.tantan.avro.AvroUserTest;
-import sun.rmi.runtime.Log;
 
 import java.util.*;
 import java.util.concurrent.CompletableFuture;

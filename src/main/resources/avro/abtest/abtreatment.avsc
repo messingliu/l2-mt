@@ -1,0 +1,14 @@
+{
+  "type": "record",
+  "namespace": "com.tantan.avro.abtest",
+  "name": "ABTestingTreatmentEvent",
+  "fields": [
+    {"name": "user_id", "type": "long"},
+    {"name": "timestamp", "type": "long"},
+    {"name": "experiment_name", "type": "string"},
+    {"name": "hash_id", "type": "int"},
+    {"name": "iteration_id", "type": "int"},
+    {"name": "segment_id", "type": "int"},
+    {"name": "treatment", "type": "string"}
+  ]
+}
