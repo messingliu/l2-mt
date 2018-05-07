@@ -19,7 +19,9 @@ run ./gradlew bootRun --debug to show print out log
 You also need to run ranker:
 https://github.com/messingliu/ranker/blob/master/README.md
 
-
+Monitoring
+curl 'localhost:8004/debug/metrics' for Prometheus metrics
+curl 'localhost:8004/debug/health' for Actuator health report
 
 
 Steps for kafka develop and test:
