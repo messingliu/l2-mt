@@ -44,8 +44,11 @@ dependencies {
 
     compile 'org.springframework.kafka:spring-kafka:2.1.4.RELEASE'
     compile 'org.apache.avro:avro:1.8.1'
-    //compile 'org.apache.avro:avro-tools:1.8.1'
     compile ('com.alibaba:fastjson:1.2.47')
+
+    compile ("org.apache.hbase:hbase-client:1.4.3") {
+        exclude module: 'slf4j-log4j12'
+    }
 
     testCompile('org.springframework.boot:spring-boot-starter-test')
     testCompile('com.jayway.jsonpath:json-path')
